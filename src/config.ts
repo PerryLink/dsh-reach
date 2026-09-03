@@ -56,6 +56,12 @@ export interface Config {
   windowSec?: number
   /** Reject (never answer) unauthorized senders instead of a friendly notice. */
   denyUnauthorized?: boolean
+  /** Optional decision auth code: replies must carry `:<code>` to take effect ('' = off). */
+  authCode?: string
+  /** Busy-task progress digest interval in seconds (0 = off). */
+  digestSec?: number
+  /** Optional bearer token for the local push API ('' = loopback-only, no token). */
+  pushToken?: string
 }
 
 /** Schemastery schema for the loader and the settings namespace. */
@@ -76,6 +82,9 @@ export const Config: Schema<Config> = Schema.object({
   sendBudget: Schema.number().default(10),
   windowSec: Schema.number().default(60),
   denyUnauthorized: Schema.boolean().default(false),
+  authCode: Schema.string(),
+  digestSec: Schema.number().default(300),
+  pushToken: Schema.string(),
 })
 
 /** Fully resolved config: every field present after {@link resolveConfig}. */
@@ -96,6 +105,9 @@ export interface ResolvedConfig {
   readonly sendBudget: number
   readonly windowSec: number
   readonly denyUnauthorized: boolean
+  readonly authCode: string
+  readonly digestSec: number
+  readonly pushToken: string
 }
 
 const APPROVAL_TIMEOUT_MODES: readonly ApprovalTimeoutMode[] = ['delegate', 'reject', 'wait']
@@ -120,6 +132,8 @@ export function resolveConfig(config: Config): ResolvedConfig {
   if (sendBudget < 1 || sendBudget > 1000) throw new TypeError('dsh-reach: sendBudget must be 1..1000')
   const windowSec = config.windowSec ?? 60
   if (windowSec < 1 || windowSec > 86400) throw new TypeError('dsh-reach: windowSec must be 1..86400')
+  const digestSec = config.digestSec ?? 300
+  if (digestSec < 0 || digestSec > 86400) throw new TypeError('dsh-reach: digestSec must be 0..86400')
   const onTimeout = config.approvalOnTimeout ?? 'delegate'
   if (!APPROVAL_TIMEOUT_MODES.includes(onTimeout)) throw new TypeError(`dsh-reach: unknown approvalOnTimeout "${String(onTimeout)}"`)
   const queueMode = config.queueMode ?? 'queue'
@@ -141,5 +155,8 @@ export function resolveConfig(config: Config): ResolvedConfig {
     sendBudget,
     windowSec,
     denyUnauthorized: config.denyUnauthorized ?? false,
+    authCode: config.authCode ?? '',
+    digestSec,
+    pushToken: config.pushToken ?? '',
   }
 }

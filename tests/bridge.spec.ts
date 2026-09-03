@@ -77,6 +77,7 @@ function setup(configOverrides: Parameters<typeof resolveConfig>[0] = {}): Harne
   let current: ReachRuntimeState = {
     security: { owner: 'u1', allowFrom: [] },
     chatSessions: { u1: 'session-1' },
+    workspaceCwd: undefined,
     delivered: undefined,
     audit: undefined,
     silent: undefined,
@@ -89,6 +90,10 @@ function setup(configOverrides: Parameters<typeof resolveConfig>[0] = {}): Harne
     states.push(next)
   }
   ctx.provide('agents', makeAgents())
+  ctx.provide('workspaceRegistry', {
+    list: () => [{ path: '/some/path', title: 'Project' }],
+    create: async (path: string) => ({ path }),
+  })
   const bridge = new Bridge({
     ctx: ctx as never,
     config: resolveConfig(configOverrides),
@@ -220,6 +225,7 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     let current: ReachRuntimeState = {
       security: { owner: undefined, allowFrom: [] },
       chatSessions: undefined,
+      workspaceCwd: undefined,
       delivered: undefined,
       audit: undefined,
       silent: undefined,
@@ -300,5 +306,51 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     h.bridge.drainNow('u1')
     await new Promise((resolve) => setTimeout(resolve, 30))
     expect(h.bridge.outboundLength('u1')).toBe(0)
+  })
+
+  // ── Phase 2 behaviors ────────────────────────────────────────────────────
+
+  it('requires the auth code suffix when authCode is configured', async () => {
+    const h = setup({ authCode: 'xyz' })
+    const outcome = h.bridge.onApproval(makeRequest(), h.next)
+    h.bridge.handleInbound({ sender: 'u1', chatId: 'u1', parts: [{ type: 'text', text: 'P1=1' }] })
+    expect(h.adapter.sent.at(-1)?.parts[0]).toMatchObject({ type: 'text', text: expect.stringContaining('授权码') })
+    h.bridge.handleInbound({ sender: 'u1', chatId: 'u1', parts: [{ type: 'text', text: 'P1=1:xyz' }] })
+    await expect(outcome).resolves.toBe('allowed-once')
+  })
+
+  it('accepts natural-language reject-all', async () => {
+    const first = harness.bridge.onApproval(makeRequest(), harness.next)
+    const second = harness.bridge.onApproval(makeRequest(), harness.next)
+    harness.bridge.handleInbound({ sender: 'u1', chatId: 'u1', parts: [{ type: 'text', text: '全部拒绝' }] })
+    await expect(first).resolves.toBe('rejected')
+    await expect(second).resolves.toBe('rejected')
+  })
+
+  it('accepts natural-language numbered approval (批准第2张)', async () => {
+    const first = harness.bridge.onApproval(makeRequest(), harness.next)
+    const second = harness.bridge.onApproval(makeRequest(), harness.next)
+    harness.bridge.handleInbound({ sender: 'u1', chatId: 'u1', parts: [{ type: 'text', text: '批准第2张' }] })
+    await expect(second).resolves.toBe('allowed-once')
+    void first
+  })
+
+  it('persists a per-chat workspace override and applies it to new sessions', () => {
+    const reply = harness.bridge.switchWorkspace('u1', '1')
+    expect(reply).toContain('已切换工作区')
+    expect(harness.lastState().workspaceCwd).toEqual({ u1: '/some/path' })
+  })
+
+  it('forgets the chat binding on /session new', () => {
+    harness.bridge.newChatSession('u1')
+    expect(harness.lastState().chatSessions).not.toHaveProperty('u1')
+  })
+
+  it('reports the busy digest driver', () => {
+    expect(harness.bridge.busyCount()).toBe(0)
+    harness.bridge.onAgentStatus(fakeAgent, 'running')
+    expect(harness.bridge.busyCount()).toBe(1)
+    harness.bridge.onAgentStatus(fakeAgent, 'idle')
+    expect(harness.bridge.busyCount()).toBe(0)
   })
 })

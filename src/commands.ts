@@ -15,10 +15,16 @@ const HELP_TEXT = `dsh-reach 命令：
 /notify on|off|status 跨会话决策推送总闸
 /tasks on|off 后台完成/报错通知
 /enter queue|steer|status 繁忙时投递
+/workspace list|switch <编号|路径> 工作区管理
+/session list|new|status 会话管理（活跃会话）
+/preset list|switch <名称|编号> Preset 管理
+/model status 默认模型
+/perm status|switch <名称> 权限预设
 /history 重看所有待处理卡片
 /stop 中断当前任务
 /next 补发出站缓存
 决策卡：单卡回复 1/2 或答案；多卡用 P1=1 P2=2（提问 P1=Q1=2）；/rp /rq 全部拒绝
+自然语言：批准/同意/拒绝 + 第N张；全部批准；全部拒绝
 其它 /xxx 命令由 DSH 原生命令处理或转发给 agent。`
 
 /** Build the bridge-owned command definitions for `ctx.commands.register`. */
@@ -28,6 +34,9 @@ export function localCommands(bridge: Bridge): readonly CommandDefinition[] {
     description,
     handler,
   })
+  /** Map the invoking agent back to the IM sender (fallback: first user). */
+  const senderOf = (invocation: { readonly agent: { readonly session: { readonly id: string } } }): string =>
+    bridge.userForSession(invocation.agent.session.id) ?? bridge.firstUser() ?? 'u1'
   return [
     def('reach', 'Show the dsh-reach bridge status.', () => ({ kind: 'success', text: 'dsh-reach bridge mounted. /help for commands.' })),
     def('help', 'List dsh-reach commands.', () => ({ kind: 'success', text: HELP_TEXT })),
@@ -79,6 +88,35 @@ export function localCommands(bridge: Bridge): readonly CommandDefinition[] {
     def('next', 'Force-drain the cached outbound queue.', () => {
       bridge.drainForFirstUser()
       return { kind: 'success', text: '已尝试补发出站缓存。' }
+    }),
+    def('workspace', 'Workspace management (list | switch <编号|路径>).', (invocation) => {
+      const [sub, ...rest] = invocation.rawInput.trim().split(/\s+/u)
+      const arg = rest.join(' ')
+      if (sub === 'switch' || sub === 'ws') return { kind: 'success', text: bridge.switchWorkspace(senderOf(invocation), arg) }
+      return { kind: 'success', text: bridge.workspaceList() }
+    }),
+    def('session', 'Session management (list | new | status).', (invocation) => {
+      const sub = invocation.rawInput.trim().split(/\s+/u)[0]
+      if (sub === 'new') return { kind: 'success', text: bridge.newChatSession(senderOf(invocation)) }
+      if (sub === 'status') return { kind: 'success', text: `绑定会话: ${bridge.userForSession(invocation.agent.session.id) ?? '无'}` }
+      return { kind: 'success', text: bridge.sessionList() }
+    }),
+    def('preset', 'Preset management (list | switch <名称|编号>).', async (invocation) => {
+      const [sub, ...rest] = invocation.rawInput.trim().split(/\s+/u)
+      const arg = rest.join(' ')
+      const text = sub === 'switch' || sub === 'p'
+        ? await bridge.presetSwitch(senderOf(invocation), arg)
+        : await bridge.presetList()
+      return { kind: 'success', text }
+    }),
+    def('model', 'Default model (status).', () => ({ kind: 'success', text: bridge.modelStatus() })),
+    def('perm', 'Permission preset (status | switch <名称>).', (invocation) => {
+      const [sub, ...rest] = invocation.rawInput.trim().split(/\s+/u)
+      const arg = rest.join(' ')
+      const text = sub === 'switch'
+        ? bridge.permSwitch(senderOf(invocation), arg)
+        : bridge.permStatus(senderOf(invocation))
+      return { kind: 'success', text }
     }),
   ]
 }

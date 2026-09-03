@@ -38,6 +38,7 @@ import type { ResolvedConfig } from './config.ts'
 export interface ReachRuntimeState {
   readonly security: SecurityState | undefined
   readonly chatSessions: Record<string, string> | undefined
+  readonly workspaceCwd: Record<string, string> | undefined
   readonly delivered: readonly string[] | undefined
   readonly audit: readonly AuditEntry[] | undefined
   readonly silent: boolean | undefined
@@ -116,10 +117,142 @@ export class Bridge {
     return this.authorizedUsers()[0]
   }
 
+  /** Whether one sender is currently authorized (owner or allowlisted). */
+  isAuthorized(user: string): boolean {
+    return isAuthorized(user, this.state().security ?? { owner: undefined, allowFrom: [] })
+  }
+
+  /** Number of agents currently running a turn (busy-digest driver). */
+  busyCount(): number {
+    return this.runningAgents.size
+  }
+
   /** Replace the sender allowlist (settings page write path). */
   patchSecurity(users: readonly string[]): void {
     const security = this.state().security ?? { owner: undefined, allowFrom: [] }
     this.persist({ security: { owner: security.owner, allowFrom: [...users] } })
+  }
+
+  // ── Console data accessors (Phase 2 command surface) ─────────────────────
+
+  /** /workspace list — registered workspaces with their session counts. */
+  workspaceList(): string {
+    const registry = this.deps.ctx.get('workspaceRegistry') as
+      | { list(): readonly { readonly title?: string; readonly path?: string }[] }
+      | undefined
+    if (!registry) return '工作区服务未挂载。'
+    const list = registry.list()
+    if (list.length === 0) return '暂无工作区。'
+    return list.map((workspace, index) => `${index + 1}. ${workspace.title ?? workspace.path ?? '?'}`).join('\n')
+  }
+
+  /** /workspace switch — bind the chat's future sessions to a workspace path or index. */
+  switchWorkspace(sender: string, arg: string): string {
+    const registry = this.deps.ctx.get('workspaceRegistry') as
+      | { list(): readonly { readonly title?: string; readonly path?: string }[] }
+      | undefined
+    if (!registry) return '工作区服务未挂载。'
+    const list = registry.list()
+    const index = Number(arg)
+    const target = Number.isInteger(index) && index >= 1 && index <= list.length
+      ? list[index - 1]
+      : list.find((workspace) => workspace.path === arg || workspace.title === arg)
+    if (!target) return '未找到该工作区（用 /workspace 查看编号）。'
+    const pathValue = target.path
+    if (!pathValue) return '该工作区没有可用路径。'
+    const workspaceCwd = { ...(this.state().workspaceCwd ?? {}), [sender]: pathValue }
+    this.persist({ workspaceCwd })
+    return `已切换工作区: ${pathValue}（新会话生效；/session new 可立即创建）。`
+  }
+
+  /** /session list — live agents only (cold-session wake is a Phase 2 TODO over sessionQuery). */
+  sessionList(): string {
+    const agents = this.deps.ctx.agents.list() as readonly { readonly session: { readonly id: string } }[]
+    if (agents.length === 0) return '暂无活跃会话。'
+    return agents.map((agent, index) => `${index + 1}. ${agent.session.id.slice(0, 8)}`).join('\n')
+  }
+
+  /** /session new — forget the chat binding so the next inbound creates a fresh session. */
+  newChatSession(sender: string): string {
+    const chatSessions = { ...(this.state().chatSessions ?? {}) }
+    delete chatSessions[sender]
+    this.persist({ chatSessions })
+    return '下一条消息将在当前工作区创建新会话。'
+  }
+
+  /** /preset list — agent presets available to the user's bound agent. */
+  async presetList(): Promise<string> {
+    const presets = this.deps.ctx.get('agentPresets') as
+      | { list(): Promise<readonly { readonly id?: string; readonly name?: string }[]> }
+      | undefined
+    if (!presets) return 'Preset 服务未挂载。'
+    const list = await presets.list()
+    if (list.length === 0) return '暂无 Preset。'
+    return list.map((preset, index) => `${index + 1}. ${preset.name ?? preset.id ?? '?'}`).join('\n')
+  }
+
+  /** /preset switch — recompose the user's bound agent on the selected preset. */
+  async presetSwitch(sender: string, arg: string): Promise<string> {
+    const presets = this.deps.ctx.get('agentPresets') as
+      | { list(): Promise<readonly { readonly id: string; readonly name?: string }[]>; select(agent: unknown, id: string): Promise<unknown> }
+      | undefined
+    if (!presets) return 'Preset 服务未挂载。'
+    const agent = this.agentFor(sender)
+    if (!agent) return '当前没有可切换的会话（先发一条消息）。'
+    const list = await presets.list()
+    const index = Number(arg)
+    const target = Number.isInteger(index) && index >= 1 && index <= list.length
+      ? list[index - 1]
+      : list.find((preset) => preset.name === arg || preset.id === arg)
+    if (!target) return '未找到该 Preset（用 /preset 查看编号）。'
+    await presets.select(agent, target.id)
+    return `已切换 Preset: ${target.name ?? target.id}。`
+  }
+
+  /** /model status — the default model selection. */
+  modelStatus(): string {
+    const models = this.deps.ctx.get('agentDefaultModel') as
+      | { currentSelection(): unknown }
+      | undefined
+    if (!models) return '模型服务未挂载。'
+    try {
+      return `当前默认模型: ${JSON.stringify(models.currentSelection())}`
+    } catch (error: unknown) {
+      return `读取失败: ${String(error)}`
+    }
+  }
+
+  /** /perm status — the bound session's permission preset name. */
+  permStatus(sender: string): string {
+    const perms = this.deps.ctx.get('permissionPresets') as
+      | { current(session: unknown): string }
+      | undefined
+    const agent = this.agentFor(sender)
+    if (!perms || !agent) return '权限服务未挂载或当前无会话。'
+    return `当前权限: ${perms.current(agent.session)}`
+  }
+
+  /** /perm switch — set the bound session's permission preset. */
+  permSwitch(sender: string, name: string): string {
+    const perms = this.deps.ctx.get('permissionPresets') as
+      | { resolve(name: string): unknown; set(session: unknown, name: string): void }
+      | undefined
+    const agent = this.agentFor(sender)
+    if (!perms || !agent) return '权限服务未挂载或当前无会话。'
+    try {
+      perms.resolve(name)
+    } catch {
+      return '未找到该权限预设。'
+    }
+    perms.set(agent.session, name)
+    return `已切换权限: ${name}。`
+  }
+
+  private agentFor(sender: string): { readonly session: unknown } | undefined {
+    const sessionId = this.state().chatSessions?.[sender]
+    if (!sessionId) return undefined
+    const agent = this.deps.ctx.agents.get(SessionId(sessionId))
+    return (agent ?? undefined) as { readonly session: unknown } | undefined
   }
 
   // ── Decision waterfalls ─────────────────────────────────────────────────
@@ -257,6 +390,7 @@ export class Bridge {
         void this.sendText(sender, `⚠️ 当前有 ${pendings.length} 张卡待处理，裸回复已拦截。请用编号指定，例如 P1=1 或 P1=Q1=2（/history 可重看）。`)
         return
       }
+      if (this.matchNaturalDecision(sender, pendings, trimmed)) return
       const reply = parseDecisionReply(text)
       if (reply !== undefined) {
         this.handleDecisionReply(sender, pendings, reply)
@@ -274,6 +408,57 @@ export class Bridge {
       return
     }
     this.submitToAgent(sender, message)
+  }
+
+  /**
+   * Rule-based natural-language decisions (the LLM fallback stays a TODO):
+   * 「全部拒绝」「拒绝全部」「全部批准」「批准第2张」「同意」「拒绝第3张」…
+   * Returns true when the text was consumed as a decision.
+   */
+  private matchNaturalDecision(sender: string, pendings: PendingCard[], text: string): boolean {
+    const lower = text.toLowerCase()
+    const rejectAll = /^(全部拒绝|拒绝全部|全拒|reject all|deny all)$/iu.test(lower)
+    if (rejectAll) {
+      const count = rejectAllApprovals(pendings) + rejectAllQuestions(pendings)
+      void this.sendText(sender, `已拒绝全部 ${count} 张卡。`)
+      this.persist({ audit: appendAudit(this.state().audit ?? [], { at: new Date().toISOString(), kind: 'decision', sender, detail: `nl reject-all ${count}` }) })
+      return true
+    }
+    const allowAll = /^(全部批准|批准全部|全部允许|approve all|allow all)$/iu.test(lower)
+    if (allowAll) {
+      let count = 0
+      for (const card of pendings) {
+        if (card.kind === 'approval') {
+          card.resolve('allowed-once')
+          count++
+        }
+      }
+      void this.sendText(sender, `已批准全部 ${count} 张权限卡。`)
+      return true
+    }
+    const numbered = /^(批准|允许|同意|拒绝|approve|allow|agree|reject|decline)\s*(?:第)?(\d+)\s*(?:张|个|卡)?$/iu.exec(lower)
+    if (numbered) {
+      const action = numbered[1] ?? ''
+      const number = Number(numbered[2])
+      const card = pendings.find((entry) => entry.number === number)
+      if (!card) {
+        void this.sendText(sender, `⚠️ 第 ${number} 张卡不存在或已处理。`)
+        return true
+      }
+      const approve = /^(批准|允许|同意|approve|allow|agree)$/iu.test(action)
+      if (card.kind === 'approval') card.resolve(approve ? 'allowed-once' : 'rejected')
+      else card.resolve(approve ? { answers: [] } : undefined)
+      void this.sendText(sender, `${approve ? '✅ 已批准' : '🚫 已拒绝'} P${card.number}。`)
+      return true
+    }
+    if (pendings.length === 1 && /^(批准|允许|同意|approve|allow|agree)$/iu.test(lower)) {
+      const card = pendings[0]
+      if (!card) return false
+      if (card.kind === 'approval') card.resolve('allowed-once')
+      void this.sendText(sender, '✅ 已批准。')
+      return true
+    }
+    return false
   }
 
   private handleDecisionReply(sender: string, pendings: PendingCard[], reply: ReturnType<typeof parseDecisionReply>): void {
@@ -304,8 +489,19 @@ export class Bridge {
       void this.sendText(sender, '⚠️ 该卡片不存在或已处理。')
       return
     }
+    // Optional decision auth code: `:<code>` suffix required to take effect.
+    const authCode = this.deps.config.authCode
+    let value = reply.value
+    if (authCode) {
+      const suffix = `:${authCode}`
+      if (!value.endsWith(suffix)) {
+        void this.sendText(sender, '⚠️ 需要授权码：回复请附加 :<授权码>。')
+        return
+      }
+      value = value.slice(0, -suffix.length)
+    }
     if (target.kind === 'approval') {
-      const outcome = resolveApprovalValue(target, reply.value)
+      const outcome = resolveApprovalValue(target, value)
       if (outcome === undefined) {
         void this.sendText(sender, '⚠️ 无法识别该决策（1 允许一次 / 2 拒绝）。')
         return
@@ -313,8 +509,8 @@ export class Bridge {
       target.resolve(outcome)
       void this.sendText(sender, outcome === 'allowed-once' ? `✅ 已允许 ${target.toolName}（一次）。` : `🚫 已拒绝 ${target.toolName}。`)
     } else {
-      const questionIndex = reply.kind === 'by-number' && reply.question ? 0 : 0
-      const answer = resolveQuestionValue(target, questionIndex, reply.value)
+      const questionIndex = 0
+      const answer = resolveQuestionValue(target, questionIndex, value)
       target.resolve(answer)
       void this.sendText(sender, '✅ 已作答提问卡。')
     }
@@ -380,7 +576,7 @@ export class Bridge {
     const existing = this.state().chatSessions?.[sender]
     if (existing && this.deps.ctx.agents.get(SessionId(existing))) return existing
     const sessionId = SessionId(crypto.randomUUID())
-    const cwd = this.deps.config.cwd
+    const cwd = this.state().workspaceCwd?.[sender] ?? this.deps.config.cwd
     void this.deps.ctx.agents.create({
       sessionId,
       ...(cwd ? { meta: { cwd } } : {}),
@@ -573,7 +769,8 @@ export class Bridge {
     else this.runningAgents.delete(agent)
   }
 
-  private userForSession(sessionId: string): string | undefined {
+  /** The IM user bound to a session (public: command handlers map agent → sender). */
+  userForSession(sessionId: string): string | undefined {
     for (const [user, id] of Object.entries(this.state().chatSessions ?? {})) {
       if (id === sessionId) return user
     }

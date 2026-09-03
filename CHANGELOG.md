@@ -10,6 +10,18 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Phase 2 — decision & command enhancements**: decision auth code
+  (`authCode`, replies must carry `:<code>`); rule-based natural-language
+  decisions (全部拒绝 / 全部批准 / 批准第N张 / 同意 …; the LLM fallback stays a
+  TODO); `/workspace list|switch` (per-chat cwd override applied to new
+  sessions), `/session list|new|status` (live agents), `/preset
+  list|switch`, `/model status`, `/perm status|switch`; the open push surface
+  (`ctx.reachPush.notify()` + `POST /reach/api/push` loopback endpoint with
+  optional bearer token + the `reach/sent` event); busy-task progress digest
+  (`digestSec`, off = 0).
+- Tests: 42 vitest cases (auth code, natural-language decisions, workspace
+  override persistence, session reset, busy digest, push authorization +
+  `reach/sent` emission).
 - **Phase 1 — WeChat single-channel MVP**: the `weixin` iLink channel adapter
   (protocol/auth/monitor/media ported from pan17/dsh-wechat 0.7.2, MIT, with
   the openclaw-weixin PR #161 `-14` recovery contract); the decision bridge

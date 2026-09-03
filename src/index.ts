@@ -35,6 +35,8 @@ import { localCommands } from './commands.ts'
 import { reachSendTool } from './tool.ts'
 import { registerChannelPrompt } from './prompt.ts'
 import { ReachService } from './service.ts'
+import { createReachPush, registerPushRoute } from './push.ts'
+import type {} from './types.ts'
 
 export const name = 'reach'
 
@@ -60,6 +62,10 @@ export const RuntimeStateSchema = Schema.object({
     chat: Schema.string(),
     session: Schema.string(),
   })),
+  workspaceCwd: Schema.array(Schema.object({
+    chat: Schema.string(),
+    cwd: Schema.string(),
+  })),
   delivered: Schema.array(Schema.string()),
   audit: Schema.array(Schema.object({
     at: Schema.string(),
@@ -77,6 +83,7 @@ export const RuntimeStateSchema = Schema.object({
 interface RuntimeNamespaceValue {
   readonly security: { readonly owner: string | undefined; readonly allowFrom: string[] } | undefined
   readonly chatSessions: readonly { readonly chat: string; readonly session: string }[]
+  readonly workspaceCwd: readonly { readonly chat: string; readonly cwd: string }[]
   readonly delivered: readonly string[]
   readonly audit: readonly AuditEntry[]
   readonly silent: boolean | undefined
@@ -90,6 +97,9 @@ const toState = (value: RuntimeNamespaceValue): ReachRuntimeState => ({
   chatSessions: value.chatSessions.length > 0
     ? Object.fromEntries(value.chatSessions.map((entry) => [entry.chat, entry.session]))
     : undefined,
+  workspaceCwd: value.workspaceCwd.length > 0
+    ? Object.fromEntries(value.workspaceCwd.map((entry) => [entry.chat, entry.cwd]))
+    : undefined,
   delivered: value.delivered,
   audit: value.audit,
   silent: value.silent,
@@ -101,6 +111,7 @@ const toState = (value: RuntimeNamespaceValue): ReachRuntimeState => ({
 const toNamespace = (state: ReachRuntimeState): RuntimeNamespaceValue => ({
   security: state.security ? { owner: state.security.owner, allowFrom: [...state.security.allowFrom] } : undefined,
   chatSessions: state.chatSessions ? Object.entries(state.chatSessions).map(([chat, session]) => ({ chat, session })) : [],
+  workspaceCwd: state.workspaceCwd ? Object.entries(state.workspaceCwd).map(([chat, cwd]) => ({ chat, cwd })) : [],
   delivered: state.delivered ?? [],
   audit: state.audit ?? [],
   silent: state.silent,
@@ -212,6 +223,26 @@ export function apply(ctx: Context, config: Config): void {
     bridge,
     allowedRoots: [resolved.cwd || process.cwd(), storageDir],
   })), 'dsh-reach: reach_send tool')
+
+  // Open push surface: ctx.reachPush.notify() + POST /reach/api/push (loopback).
+  const push = createReachPush(ctx, { bridge, pushToken: resolved.pushToken })
+  ctx.effect(() => ctx.provide('reachPush', push), 'dsh-reach: reachPush service')
+  ctx.effect(() => registerPushRoute(ctx, push, resolved.pushToken), 'dsh-reach: /reach/api/push route')
+
+  // Busy-task progress digest (off when digestSec = 0).
+  if (resolved.digestSec > 0) {
+    ctx.effect(() => {
+      const timer = setInterval(() => {
+        const user = bridge.firstUser()
+        if (!user || bridge.isSilent()) return
+        if (bridge.busyCount() > 0) {
+          void bridge.sendText(user, '🔄 仍在处理中…')
+        }
+      }, resolved.digestSec * 1000)
+      timer.unref?.()
+      return () => clearInterval(timer)
+    }, 'dsh-reach: busy digest')
+  }
 
   // Channel-source prompt section.
   registerChannelPrompt(ctx, (agent) => bridge.isImSession(agent.session.id))
