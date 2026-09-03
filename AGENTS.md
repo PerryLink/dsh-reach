@@ -2,6 +2,17 @@
 
 Standalone DeepSeek Harness plugin repository (`dsh-reach`). Development follows the dsh-plugin-guide skill and the official plugin contract; this file records repo-local decisions. The design authority for the rebuild is `docs/design/03-rebuild-direction-and-plan.md` (competitor research + official contract verification + community experience).
 
+## Decisions (2026-09-03, user-approved)
+
+- §9.1 插件名 = `dsh-reach`（npm/GitHub 已实测空闲）。
+- §9.2 v1 通道范围 = 微信单通道先做精（已超预期完成三通道：weixin/telegram/feishu）。
+- §9.3 多用户 = v1 单 owner + 白名单；trust-set 多用户进 v2。
+- §9.4 依赖策略 = typed peers（双基线，已落地）。
+- §9.5 **PR 给 pan17 = 同意**（待发布会话用 gh 授权执行；上游停摆 forks=0，PR 为生态回馈非依赖）。
+- §9.6 发布节奏 = Phase 4 一次性全平台发布（独立 D 类发布会话）。
+- §9.7 **QQ/钉钉/企微列入 v2 通道清单 = 同意**（在 feishu 适配器验证的 ChannelAdapter 契约上扩展）。
+- 真机验证（微信扫码 / Telegram bot / 飞书 app）由用户执行，完成后结果回填 CHANGELOG。
+
 ## Layout
 
 - `src/index.ts` — function-plugin contract (`name`/`inject`/`Config`/`apply`; NO default export). Injects `settings` + `tools` + `credentials`; mounts the `reach` + `reach-runtime` settings namespaces, the weixin channel adapter + monitor, the decision bridge (deferred-answerer waterfall listeners on `approval/request` / `user-questions/request` with `next()` delegate / `rejected` fail-closed / keep-waiting policies), the `reach` Remote service (status/config/relogin/logout, registered through the hand-written TYPERT manifest — no runtime decorators), the bridge-owned slash commands (official `ctx.commands` registry + `execute()` passthrough), the `reach_send` tool, and the channel-source prompt section.
