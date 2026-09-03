@@ -20,6 +20,14 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
+    "./typert": {
+      "types": "./lib/types/typert.host.d.ts",
+      "default": "./lib/typert.host.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -39,6 +47,14 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-connection",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
     }
   },
   "dshWorkshop": {
@@ -156,7 +172,8 @@
   },
   "dependencies": {
     "tsdown": "^0.22.14",
-    "typescript": "^7.0.0"
+    "typescript": "^7.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
@@ -188,8 +205,11 @@
     "@deepseek-ai/dsh-workspace": "0.1.2-alpha.5",
     "@deepseek-ai/schemastery": "^3.18.2",
     "@types/node": "^22.19.0",
+    "@types/react": "18.3.31",
     "@vitest/coverage-v8": "4.1.10",
     "oxlint": "0.18.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "vitest": "^4.1.10"
   },
   "scripts": {

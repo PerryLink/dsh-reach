@@ -2,9 +2,17 @@
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink 首发），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
-> **状态：Phase 0 骨架（v0.1.0）。** 设计计划、竞品调研、官方契约核实与分阶段路线见
+> **状态：Phase 1 完成（微信单通道 MVP，v0.1.0）。** 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
-> 微信通道移植与决策桥在 Phase 1 落地。
+> Phase 2（决策与命令增强）与 Phase 3（飞书/Telegram 适配器）为下一步。
+
+## 功能（Phase 1）
+
+- **跨会话决策推送**：任意工作区的审批/提问卡镜像到微信（iLink/ClawBot），带稳定 `#token` 卡号与 `P{n}` 编号；回复 `1/2`、`P1=1 P2=2`、`P1=Q1=2` 或 `/rp` `/rq`——经原生 pending 瀑布应答（与 GUI 谁先回复谁生效）。
+- **安全默认 fail-closed**：首位发送者成为 owner；白名单为空拒绝所有人；陌生发送者只审计不回复。
+- **会话控制台**：`/status /silent /notify /tasks /enter /history /stop /next /help` + DSH 原生命令透传。
+- **主动推送**：`reach_send` 工具（出站文件围栏）、限流预算 + FIFO 补发、静默模式、后台完成通知。
+- **设置页**：设置 → 插件 → IM 桥接（状态、开关、重新扫码/退出登录）。
 
 ## Install
 
@@ -24,9 +32,15 @@ profile 行支持以下键（Schemastery 校验，非法值加载期响亮失败
 | `crossSessionNotify` | `true` | 推送任意工作区/会话的决策卡（总闸） |
 | `notifyTaskEvents` | `false` | 后台任务完成/报错通知 |
 | `cardTimeoutSec` | `1800` | 决策卡软超时（秒；`0` = 永久等待） |
+| `approvalOnTimeout` | `delegate` | 超时策略：`delegate`（交回 GUI）/ `reject` / `wait` |
 | `textChunkLimit` | `4000` | 长回复单条消息分段上限（字符） |
 | `silent` | `false` | 静默模式：只发最终回复 |
 | `cwd` | `''` | 新 IM 会话默认工作目录（'' = 宿主 cwd） |
+| `baseUrl` / `cdnBaseUrl` / `botType` | iLink 默认 | 微信网关 / 媒体 CDN / bot 类型 |
+| `allowFrom` | `[]` | 发送者白名单（空 = 全部拒绝；首位发送者 = owner） |
+| `queueMode` | `queue` | 繁忙投递：`queue` 排队 / `steer` 插话 |
+| `maxQueue` / `sendBudget` / `windowSec` | `50` / `10` / `60` | 排队上限、窗口发送预算、窗口秒数 |
+| `denyUnauthorized` | `false` | 未授权发送者：静默忽略（true）或友好提示（false） |
 
 ## Development
 

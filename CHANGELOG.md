@@ -10,9 +10,26 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Phase 0 scaffold: bundle manifest (`dsh.bundle.patch`), Schemastery `Config`
-  with fail-loud `resolveConfig`, the `reach` settings namespace, the optional
-  `/reach` slash command, the `reach_ping` placeholder tool, five-language
-  README skeletons, and the CI/compat/release/scorecard workflows.
-- Repo-local conventions in `AGENTS.md` and the architecture map; the rebuild
-  design plan lives in `docs/design/03-rebuild-direction-and-plan.md`.
+- **Phase 1 — WeChat single-channel MVP**: the `weixin` iLink channel adapter
+  (protocol/auth/monitor/media ported from pan17/dsh-wechat 0.7.2, MIT, with
+  the openclaw-weixin PR #161 `-14` recovery contract); the decision bridge
+  (deferred-answerer listeners on `approval/request` / `user-questions/request`,
+  stable `#token` card ids + `P{n}` numbering, narrowed decision capture,
+  multi-card bare-reply guard, `/rp` `/rq`, timeout policies
+  `delegate`/`reject`/`wait`, delivered-set persistence); per-user fail-closed
+  security (owner bootstrap pairing + allowlist + bounded audit tail); the
+  `reach` Remote service (status/config/relogin/logout) with the hand-written
+  TYPERT manifest; the settings tab (settings.plugins.tab, en/zh); bridge-owned
+  slash commands through the official `ctx.commands` registry; the `reach_send`
+  tool with an outbound file fence; outbound ordered queue with per-window
+  budget and FIFO re-queue; silent mode; `notifyTaskEvents` gate; the
+  channel-source prompt section.
+- Config: Schemastery schema with fail-loud `resolveConfig` (channel, security,
+  budget, and policy knobs); runtime state persisted through the
+  `reach-runtime` settings namespace; bot session token stored as a
+  credentials grant record (`dsh-reach/weixin-session`).
+- Tests: 32 vitest cases (config bounds, decision parsing, card mirroring,
+  token/numbered replies, multi-card guard, `/rp`, timeout policies,
+  narrowed capture, authorization, silent relay, turn/end gate, budget/FIFO
+  re-queue) plus the built-artifact entry-contract check.
+
