@@ -9,6 +9,7 @@ packages:
 # (ERR_PNPM_IGNORED_BUILDS); esbuild is required for tsdown bundling.
 allowBuilds:
   esbuild: true
+  protobufjs: true
 
 minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh-agent@0.1.2-alpha.5'

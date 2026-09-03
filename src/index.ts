@@ -30,6 +30,7 @@ import type {} from '@deepseek-ai/dsh-system-prompt'
 import { Config, resolveConfig } from './config.ts'
 import { WeixinAdapter, resolveStorageDir } from './adapters/weixin/weixin.ts'
 import { TelegramAdapter } from './adapters/telegram/telegram.ts'
+import { FeishuAdapter, sdkTransport } from './adapters/feishu/feishu.ts'
 import { Bridge, type ReachRuntimeState } from './bridge.ts'
 import type { AuditEntry } from './security.ts'
 import { localCommands } from './commands.ts'
@@ -158,11 +159,20 @@ export function apply(ctx: Context, config: Config): void {
     configuredToken: resolved.telegramToken,
     log,
   })
+  const feishu = new FeishuAdapter({
+    appId: '',
+    appSecret: '',
+    requireMention: true,
+    credentials: ctx.credentials,
+    sessionKey: credentialKey('dsh-reach', 'feishu-app'),
+    transport: sdkTransport(() => feishu.credentials(), log),
+    log,
+  })
 
   const bridge = new Bridge({
     ctx,
     config: resolved,
-    adapters: [adapter, telegram],
+    adapters: [adapter, telegram, feishu],
     readState: () => toState(runtimeScope.get() ?? {}),
     writeState: (next) => {
       void runtimeScope.replace(toNamespace(next))
@@ -208,6 +218,15 @@ export function apply(ctx: Context, config: Config): void {
     })
     return () => tgController.abort()
   }, 'dsh-reach: telegram monitor')
+
+  // Feishu monitor (no-op until the feishu-app grant is configured).
+  ctx.effect(() => {
+    const fsController = new AbortController()
+    feishu.start(fsController.signal, (message) => bridge.handleInbound(message), () => {
+      log('feishu session invalid — check the app credentials')
+    })
+    return () => fsController.abort()
+  }, 'dsh-reach: feishu monitor')
 
   // Remote service for the settings page.
   void ctx.plugin(function mountReachService(serviceCtx: Context): void {

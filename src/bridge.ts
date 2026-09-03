@@ -118,8 +118,10 @@ export class Bridge {
     return this.authorizedUsers()[0]
   }
 
-  /** Route one chat id to its channel adapter (numeric ids = telegram). */
+  /** Route one chat id to its channel adapter (numeric = telegram, oc_ = feishu). */
   adapterFor(chatId: string): ChannelAdapter {
+    const feishu = this.deps.adapters.find((adapter) => adapter.id === 'feishu')
+    if (feishu && chatId.startsWith('oc_')) return feishu
     const telegram = this.deps.adapters.find((adapter) => adapter.id === 'telegram')
     if (telegram && /^[-0-9]+$/u.test(chatId)) return telegram
     return this.deps.adapters.find((adapter) => adapter.id === 'weixin') ?? this.deps.adapters[0] ?? this.fallbackAdapter

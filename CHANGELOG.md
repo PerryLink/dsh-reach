@@ -10,6 +10,12 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Phase 3 (part 2) — Feishu adapter**: the Feishu/Lark channel adapter
+  (transport seam + SDK-backed WS long connection, app credentials from the
+  `dsh-reach/feishu-app` grant record, @-mention gating for groups,
+  interactive decision cards with button values mapped to `P{n}=` replies,
+  `oc_` chat-id routing); fake-transport tests. Real-device verification is
+  pending (documented).
 - **Phase 4 (local closure)**: the contract-drift gate
   (`check:contract-drift` — asserts the 10 host seams `dsh-reach` depends on
   still export their required faces against the published peers) and the
