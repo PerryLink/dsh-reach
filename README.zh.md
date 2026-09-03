@@ -2,7 +2,7 @@
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink 首发），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
-> **状态：Phase 1 完成（微信单通道 MVP，v0.1.0）。** 设计计划、竞品调研、官方契约核实与分阶段路线见
+> **状态：Phase 1 完成（微信单通道 MVP，v0.1.1）。** 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
 > Phase 2（决策与命令增强）与 Phase 3（飞书/Telegram 适配器）为下一步。
 

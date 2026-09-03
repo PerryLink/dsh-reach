@@ -2,7 +2,7 @@
 
 Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): pushes any workspace's approval/question cards to IM channels (WeChat iLink first) and answers them from chat, with a session console, per-channel security, and an open push service.
 
-> **Status: Phase 1–3 complete (WeChat + Telegram + Feishu channels, v0.1.0).**
+> **Status: Phase 1–3 complete (WeChat + Telegram + Feishu channels, v0.1.1).**
 > The design plan, competitor research, official contract verification, and
 > phased roadmap live in
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
