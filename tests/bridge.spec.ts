@@ -354,6 +354,16 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     expect(harness.bridge.busyCount()).toBe(0)
   })
 
+  it('dispose() settles every pending decision so unload never strands an approval', async () => {
+    const first = harness.bridge.onApproval(makeRequest(), harness.next)
+    const second = harness.bridge.onApproval(makeRequest(), harness.next)
+    harness.bridge.dispose()
+    await expect(first).resolves.toBe('unavailable')
+    await expect(second).resolves.toBe('unavailable')
+    expect(harness.bridge.pendingCount('u1')).toBe(0)
+    expect(harness.next).not.toHaveBeenCalled()
+  })
+
   it('routes numeric chat ids to the telegram adapter and others to weixin', async () => {
     const ctx = new Context()
     const weixin = new FakeAdapter('weixin')

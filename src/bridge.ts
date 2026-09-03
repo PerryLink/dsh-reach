@@ -148,6 +148,26 @@ export class Bridge {
     return this.runningAgents.size
   }
 
+  /**
+   * Unload cleanup: settle every held decision promise so unloading the
+   * plugin never strands a pending approval (the answerer chain must keep
+   * flowing — settle `'unavailable'` and let the service fail closed), clear
+   * card timers, and drop the in-memory outbound/inbound queues.
+   */
+  dispose(): void {
+    for (const cards of this.pendingByUser.values()) {
+      for (const card of cards) {
+        if (card.timer) clearTimeout(card.timer)
+        if (card.kind === 'approval') card.resolve('unavailable')
+        else card.resolve({ answers: [] })
+      }
+    }
+    this.pendingByUser.clear()
+    this.outbound.clear()
+    this.chatQueues.clear()
+    this.runningAgents.clear()
+  }
+
   /** Replace the sender allowlist (settings page write path). */
   patchSecurity(users: readonly string[]): void {
     const security = this.state().security ?? { owner: undefined, allowFrom: [] }

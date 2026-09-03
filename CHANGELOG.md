@@ -10,6 +10,16 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Loose coupling & unload safety**: zero hard service dependencies
+  (`inject: []`) — every feature gates on `ctx.get` and degrades (settings
+  → in-memory state; tools/commands/webServer/systemPrompt → surface
+  skipped; credentials → row-config tokens only); `bridge.dispose()` settles
+  every pending decision on unload (approval → `'unavailable'`, question →
+  empty answer) so unloading never strands the answerer chain; the
+  `credentials/record-updated` monitor listener is now disposed with its
+  effect. Verified by `tests/lifecycle.spec.ts` (full/minimal/no-settings
+  compositions) + a `dispose()` regression test; the degradation matrix is
+  documented in `ARCHITECTURE.md`.
 - **Phase 3 (part 2) — Feishu adapter**: the Feishu/Lark channel adapter
   (transport seam + SDK-backed WS long connection, app credentials from the
   `dsh-reach/feishu-app` grant record, @-mention gating for groups,

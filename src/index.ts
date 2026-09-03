@@ -2,11 +2,16 @@
  * `dsh-reach` — multi-channel decision & remote-control bridge for
  * DeepSeek Harness.
  *
- * Host half: mounts the weixin channel adapter, the decision bridge
- * (deferred-answerer listeners on `approval/request` /
- * `user-questions/request`), the `reach` Remote service, the bridge-owned
- * slash commands (official `ctx.commands` registry), the `reach_send` tool,
- * and the channel-source prompt section.
+ * Loose-coupling design: the plugin declares NO hard service dependencies
+ * (`inject` is empty). Every feature gates on `ctx.get(...)` and degrades:
+ * - no `settings` → runtime state becomes session-scoped (in-memory);
+ * - no `tools` → the `reach_send` tool is skipped;
+ * - no `credentials` → channel tokens come from the row config only;
+ * - no `commands` / `webServer` / `systemPrompt` → those surfaces are skipped.
+ *
+ * Unload safety: every registration, timer, poller, and listener is an
+ * effect on this fiber; `bridge.dispose()` settles every held decision
+ * promise so unloading never strands a pending approval.
  *
  * Function plugin — no default export (the Loader unwraps
  * `exports.default ?? exports`).
@@ -16,7 +21,7 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import Schema from '@deepseek-ai/schemastery'
-import { credentialKey } from '@deepseek-ai/dsh-credentials'
+import { credentialKey, type CredentialProvider } from '@deepseek-ai/dsh-credentials'
 import type {} from '@deepseek-ai/dsh-credentials'
 import type {} from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-settings'
@@ -42,11 +47,13 @@ import type {} from './types.ts'
 
 export const name = 'reach'
 
-/** Hard services: settings (config + runtime namespaces), tools, credentials. */
-export const inject = ['settings', 'tools', 'credentials']
+/** Zero hard dependencies: every feature gates on `ctx.get` and degrades. */
+export const inject: string[] = []
 
 export { Config, resolveConfig, type Config as ReachConfig, type ResolvedConfig } from './config.ts'
 export { WeixinAdapter } from './adapters/weixin/weixin.ts'
+export { TelegramAdapter } from './adapters/telegram/telegram.ts'
+export { FeishuAdapter, sdkTransport, renderDecisionCard, decisionTextFromButtonValue } from './adapters/feishu/feishu.ts'
 export { Bridge, type ReachRuntimeState } from './bridge.ts'
 export {
   parseDecisionReply, renderApprovalCard, renderQuestionCard, shortToken,
@@ -79,7 +86,7 @@ export const RuntimeStateSchema = Schema.object({
   crossSessionNotify: Schema.boolean(),
   notifyTaskEvents: Schema.boolean(),
   queueMode: Schema.union(['queue', 'steer'] as const),
-}) as Schema<RuntimeNamespaceValue>
+})
 
 /** Persisted shape of the runtime namespace (mapped to/from ReachRuntimeState). */
 interface RuntimeNamespaceValue {
@@ -122,12 +129,49 @@ const toNamespace = (state: ReachRuntimeState): RuntimeNamespaceValue => ({
   queueMode: state.queueMode,
 })
 
+/** No-op credentials provider for compositions without the credentials seam. */
+const nullCredentials = {
+  resolve: async () => undefined,
+  describe: async () => ({ configured: false, writable: false }),
+  set: async () => {},
+  unset: async () => {},
+  readRecord: async () => undefined,
+  describeRecord: async () => ({ configured: false, writable: false }),
+  listRecords: async () => [],
+  modifyRecord: async () => undefined,
+  deleteRecord: async () => {},
+} as unknown as CredentialProvider
+
+/** Structural face of the settings scope we consume (register + owner scope). */
+interface SettingsFace {
+  register<Namespace extends string, T>(ns: Namespace, schema: unknown, options?: unknown): {
+    get(): T | undefined
+    watch(callback: (next: T, prev: T) => void | Promise<void>): () => void
+    update(patch: object): Promise<void>
+    replace(section: object): Promise<void>
+  }
+}
+
+/** Structural face of the tool registry. */
+interface ToolsFace {
+  register(definition: unknown): () => void
+}
+
+/** Structural face of the command registry. */
+interface CommandsFace {
+  register(definition: unknown): () => void
+  find(agent: unknown, name: string): unknown
+  execute(agent: unknown, line: string, images: readonly unknown[], signal: AbortSignal): Promise<{
+    readonly result: { readonly kind: 'success' | 'error'; readonly text?: string }
+  } | undefined>
+}
+
 /**
- * Mount the plugin. Every registration is an effect on this fiber, so
- * unload/hot-reload removes the adapter monitor, the bridge listeners, the
- * service, the commands, and the tool together.
+ * Mount the plugin. Every registration is an effect on this fiber; unload
+ * removes the monitors, listeners, service, commands, tool, route, and
+ * digest timer together, and `bridge.dispose()` settles pending decisions.
  *
- * @param ctx - context carrying settings + tools + credentials.
+ * @param ctx - host context (any composition; features gate on available services).
  * @param config - raw loader config; defaults applied through {@link resolveConfig}.
  */
 export function apply(ctx: Context, config: Config): void {
@@ -135,12 +179,33 @@ export function apply(ctx: Context, config: Config): void {
   const log = (message: string): void => ctx.logger.info(`dsh-reach: ${message}`)
   const storageDir = resolveStorageDir('')
 
-  // Settings namespaces: `reach` (config surface) and `reach-runtime` (state).
-  const configScope = ctx.settings.register('reach', Config, { applies: 'live' })
-  const runtimeScope = ctx.settings.register<`reach-runtime`, RuntimeNamespaceValue>(
+  const settings = ctx.get('settings') as SettingsFace | undefined
+  const tools = ctx.get('tools') as ToolsFace | undefined
+  const credentials = ctx.get('credentials') as CredentialProvider | undefined
+
+  // Runtime state: settings-backed when the seam exists, else session-scoped.
+  let memoryState: ReachRuntimeState = {
+    security: undefined,
+    chatSessions: undefined,
+    workspaceCwd: undefined,
+    delivered: undefined,
+    audit: undefined,
+    silent: undefined,
+    crossSessionNotify: resolved.crossSessionNotify,
+    notifyTaskEvents: resolved.notifyTaskEvents,
+    queueMode: undefined,
+  }
+  const configScope = settings?.register('reach', Config, { applies: 'live' })
+  const runtimeScope = settings?.register<`reach-runtime`, RuntimeNamespaceValue>(
     'reach-runtime',
     RuntimeStateSchema as unknown as Schema<RuntimeNamespaceValue>,
   )
+  const readState = (): ReachRuntimeState =>
+    runtimeScope ? toState(runtimeScope.get() ?? {} as RuntimeNamespaceValue) : memoryState
+  const writeState = (next: ReachRuntimeState): void => {
+    if (runtimeScope) void runtimeScope.replace(toNamespace(next))
+    else memoryState = next
+  }
 
   const sessionKey = credentialKey('dsh-reach', 'weixin-session')
   const adapter = new WeixinAdapter({
@@ -149,12 +214,12 @@ export function apply(ctx: Context, config: Config): void {
     botType: resolved.botType,
     textChunkLimit: resolved.textChunkLimit,
     storageDir,
-    credentials: ctx.credentials,
+    credentials: credentials ?? nullCredentials,
     sessionKey,
     log,
   })
   const telegram = new TelegramAdapter({
-    credentials: ctx.credentials,
+    credentials: credentials ?? nullCredentials,
     sessionKey: credentialKey('dsh-reach', 'telegram-token'),
     configuredToken: resolved.telegramToken,
     log,
@@ -163,7 +228,7 @@ export function apply(ctx: Context, config: Config): void {
     appId: '',
     appSecret: '',
     requireMention: true,
-    credentials: ctx.credentials,
+    credentials: credentials ?? nullCredentials,
     sessionKey: credentialKey('dsh-reach', 'feishu-app'),
     transport: sdkTransport(() => feishu.credentials(), log),
     log,
@@ -173,10 +238,8 @@ export function apply(ctx: Context, config: Config): void {
     ctx,
     config: resolved,
     adapters: [adapter, telegram, feishu],
-    readState: () => toState(runtimeScope.get() ?? {}),
-    writeState: (next) => {
-      void runtimeScope.replace(toNamespace(next))
-    },
+    readState,
+    writeState,
     log,
   })
 
@@ -188,25 +251,29 @@ export function apply(ctx: Context, config: Config): void {
   ctx.on('agent/error', ({ agent }) => bridge.onAgentError(agent))
   ctx.on('agent/status', ({ agent, status }) => bridge.onAgentStatus(agent, status))
 
-  // Channel monitor: restart on token changes (login/logout/refresh).
-  let controller = new AbortController()
-  const startMonitor = (): void => {
-    controller = new AbortController()
-    adapter.start(controller.signal, (message) => bridge.handleInbound(message), () => {
-      log('weixin session invalid — waiting for re-scan')
-    })
-  }
+  // Unload safety: never strand a pending decision.
+  ctx.effect(() => () => bridge.dispose(), 'dsh-reach: bridge disposal')
+
+  // Weixin monitor (restarts on token changes; the record-updated listener is
+  // disposed WITH the effect — no leak on unload).
   ctx.effect(() => {
-    startMonitor()
-    const onRecord = (key: unknown): void => {
-      if (key === sessionKey) {
-        controller.abort()
-        startMonitor()
-      }
+    let controller = new AbortController()
+    const restart = (): void => {
+      controller.abort()
+      controller = new AbortController()
+      adapter.start(controller.signal, (message) => bridge.handleInbound(message), () => {
+        log('weixin session invalid — waiting for re-scan')
+      })
     }
-    ctx.on('credentials/record-updated', onRecord)
+    restart()
+    const disposeListener = credentials !== undefined
+      ? ctx.on('credentials/record-updated', (key: unknown) => {
+          if (key === sessionKey) restart()
+        })
+      : undefined
     return () => {
       controller.abort()
+      disposeListener?.()
     }
   }, 'dsh-reach: weixin monitor')
 
@@ -234,8 +301,8 @@ export function apply(ctx: Context, config: Config): void {
       bridge,
       adapter,
       security: {
-        owner: () => toState(runtimeScope.get() ?? {}).security?.owner,
-        allowFrom: () => toState(runtimeScope.get() ?? {}).security?.allowFrom ?? [],
+        owner: () => readState().security?.owner,
+        allowFrom: () => readState().security?.allowFrom ?? [],
         setAllowFrom: (users) => {
           bridge.patchSecurity(users)
         },
@@ -243,8 +310,8 @@ export function apply(ctx: Context, config: Config): void {
     })
   })
 
-  // Bridge-owned slash commands (official registry: GUI discovery + audit).
-  const commands = ctx.get('commands')
+  // Bridge-owned slash commands (skipped when the registry is absent).
+  const commands = ctx.get('commands') as CommandsFace | undefined
   if (commands !== undefined) {
     for (const definition of localCommands(bridge)) {
       ctx.effect(() => commands.register(definition), `dsh-reach: /${definition.name} command`)
@@ -253,11 +320,15 @@ export function apply(ctx: Context, config: Config): void {
     log('ctx.commands is not mounted; slash commands are unavailable')
   }
 
-  // Proactive push tool.
-  ctx.effect(() => ctx.tools.register(reachSendTool({
-    bridge,
-    allowedRoots: [resolved.cwd || process.cwd(), storageDir],
-  })), 'dsh-reach: reach_send tool')
+  // Proactive push tool (skipped when the tool registry is absent).
+  if (tools !== undefined) {
+    ctx.effect(() => tools.register(reachSendTool({
+      bridge,
+      allowedRoots: [resolved.cwd || process.cwd(), storageDir],
+    })), 'dsh-reach: reach_send tool')
+  } else {
+    log('ctx.tools is not mounted; the reach_send tool is unavailable')
+  }
 
   // Open push surface: ctx.reachPush.notify() + POST /reach/api/push (loopback).
   const push = createReachPush(ctx, { bridge, pushToken: resolved.pushToken })
@@ -279,8 +350,10 @@ export function apply(ctx: Context, config: Config): void {
     }, 'dsh-reach: busy digest')
   }
 
-  // Channel-source prompt section.
-  registerChannelPrompt(ctx, (agent) => bridge.isImSession(agent.session.id))
+  // Channel-source prompt section (skipped when systemPrompt is absent).
+  if (ctx.get('systemPrompt') !== undefined) {
+    registerChannelPrompt(ctx, (agent) => bridge.isImSession(agent.session.id))
+  }
 
   // Keep the config scope referenced: the namespace resolves row defaults
   // and the settings page writes land here.

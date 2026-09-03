@@ -24,6 +24,33 @@ bridge (host half) ── chat↔session routing · deferred-answerer waterfall
 adapters/{weixin, feishu, telegram} · client (settings page + pairing)
 ```
 
+## Loose coupling: load/unload & degradation matrix
+
+The plugin declares **zero hard dependencies** (`inject: []`); every feature
+gates on `ctx.get(...)` and degrades when its service is absent, so the
+bundle loads in ANY composition (web, headless, minimal) and unloads
+completely (every registration is an effect; `bridge.dispose()` settles
+pending decisions).
+
+| Feature | Service | Degradation when absent | Unload behavior |
+|---|---|---|---|
+| Runtime state persistence | `settings` | in-memory, session-scoped | effect-owned namespace registration removed |
+| Config namespace `reach` | `settings` | skipped | same |
+| `reach_send` tool | `tools` | skipped | `tools.register` disposer |
+| Slash commands | `commands` | skipped (log warn) | per-command disposers |
+| Channel tokens | `credentials` | row-config tokens only (`telegramToken`); no token store | adapters read per operation, nothing to remove |
+| Weixin monitor | (none) | no-op until a token exists; `-14` → session-invalid surfacing | AbortController per effect; `credentials/record-updated` listener disposed WITH the effect |
+| Telegram / Feishu monitors | (none) | no-op until configured | AbortController per effect |
+| Push API route | `webServer` | skipped | route disposer |
+| Push service `reachPush` | (none) | always provided | `ctx.provide` disposer |
+| Channel prompt section | `systemPrompt` | skipped | registered through the plugin fiber |
+| Pending decision cards | (none) | — | `bridge.dispose()` resolves `'unavailable'` (approval) / empty answer (question) so the answerer chain keeps flowing |
+| Busy digest timer | (none) | off when `digestSec = 0` | `clearInterval` in effect cleanup |
+
+Verified by `tests/lifecycle.spec.ts` (full composition mount/unmount,
+no-service minimal composition, settings-less memory-state degradation) and
+the `dispose()` regression in `tests/bridge.spec.ts`.
+
 ## Official seams (verified against the checkout, 2026-09-03)
 
 | Concern | Mechanism |
