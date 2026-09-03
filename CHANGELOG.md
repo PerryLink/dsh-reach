@@ -6,7 +6,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-## [0.1.0] — unreleased
+## [0.1.1] — 2026-09-03
 
 ### Added
 
@@ -51,6 +51,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
 - Tests: 42 vitest cases (auth code, natural-language decisions, workspace
   override persistence, session reset, busy digest, push authorization +
   `reach/sent` emission).
+
+## [0.1.0] — 2026-09-03
+
+### Added
+
 - **Phase 1 — WeChat single-channel MVP**: the `weixin` iLink channel adapter
   (protocol/auth/monitor/media ported from pan17/dsh-wechat 0.7.2, MIT, with
   the openclaw-weixin PR #161 `-14` recovery contract); the decision bridge

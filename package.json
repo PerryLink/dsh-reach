@@ -1,6 +1,6 @@
 {
   "name": "dsh-reach",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Multi-channel decision & remote-control bridge for DeepSeek Harness: pushes any workspace's approval/question cards to IM channels (WeChat iLink first) and answers them from chat, with a session console, per-channel security, and an open push service.",
   "repository": {
     "type": "git",
