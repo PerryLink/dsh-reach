@@ -7,7 +7,7 @@
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md) में हैं।
 > WeChat चैनल पोर्ट और निर्णय ब्रिज Phase 1 में आएँगे।
 
-## इंस्टॉल
+## Install
 
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
@@ -16,7 +16,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 इंस्टॉल के बाद DSH पुनः प्रारंभ करें (bundle पैच स्टार्टअप पर लागू होते हैं)।
 
-## कॉन्फ़िगरेशन
+## Configuration
 
 | कुंजी | डिफ़ॉल्ट | विवरण |
 |---|---|---|
@@ -27,7 +27,7 @@ dsh1024 plugin --profile web add dsh-reach
 | `silent` | `false` | केवल अंतिम उत्तर, चरण-दर-चरण स्ट्रीमिंग नहीं |
 | `cwd` | `''` | नए IM सेशन के लिए डिफ़ॉल्ट कार्य निर्देशिका |
 
-## विकास
+## Development
 
 ```bash
 pnpm install
@@ -36,6 +36,6 @@ pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts
 pnpm run check:readmes && pnpm pack
 ```
 
-## लाइसेंस
+## License
 
 Apache-2.0। तृतीय-पक्ष सूचनाएँ [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) में।

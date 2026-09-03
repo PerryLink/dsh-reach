@@ -8,7 +8,7 @@ Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https:/
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
 > El canal de WeChat y el puente de decisiones llegan en la Fase 1.
 
-## Instalación
+## Install
 
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
@@ -17,7 +17,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar).
 
-## Configuración
+## Configuration
 
 | Clave | Valor por defecto | Descripción |
 |---|---|---|
@@ -28,7 +28,7 @@ Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar
 | `silent` | `false` | Solo respuestas finales, sin streaming por pasos |
 | `cwd` | `''` | Directorio de trabajo por defecto para sesiones IM nuevas |
 
-## Desarrollo
+## Development
 
 ```bash
 pnpm install
@@ -37,6 +37,6 @@ pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts
 pnpm run check:readmes && pnpm pack
 ```
 
-## Licencia
+## License
 
 Apache-2.0. Avisos de terceros en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

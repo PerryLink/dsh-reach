@@ -6,7 +6,7 @@
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
 > 微信通道移植与决策桥在 Phase 1 落地。
 
-## 安装
+## Install
 
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
@@ -15,7 +15,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 安装后需重启 DSH（bundle 补丁在启动时生效）。
 
-## 配置
+## Configuration
 
 profile 行支持以下键（Schemastery 校验，非法值加载期响亮失败）：
 
@@ -28,7 +28,7 @@ profile 行支持以下键（Schemastery 校验，非法值加载期响亮失败
 | `silent` | `false` | 静默模式：只发最终回复 |
 | `cwd` | `''` | 新 IM 会话默认工作目录（'' = 宿主 cwd） |
 
-## 开发
+## Development
 
 ```bash
 pnpm install
@@ -37,6 +37,6 @@ pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts
 pnpm run check:readmes && pnpm pack
 ```
 
-## 许可
+## License
 
 Apache-2.0。第三方声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

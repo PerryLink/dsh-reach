@@ -24,6 +24,7 @@
   },
   "files": [
     "lib",
+    "./lib/index.js",
     "cordis.patch.yml",
     "CHANGELOG.md",
     "SECURITY.md",
@@ -99,7 +100,7 @@
   "packageManager": "pnpm@11.7.0",
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.2",
-    "@deepseek-ai/schemastery": "^3.18.0",
+    "@deepseek-ai/schemastery": "^3.18.2",
     "@deepseek-ai/dsh-tools": ">=0.1.0-rc.8 <0.2.0",
     "@deepseek-ai/dsh-settings": ">=0.1.0-rc.8 <0.2.0",
     "@deepseek-ai/dsh-agent": ">=0.1.0-rc.8 <0.2.0",
@@ -185,7 +186,7 @@
     "@deepseek-ai/dsh-user-approval": "0.1.2-alpha.5",
     "@deepseek-ai/dsh-user-questions": "0.1.2-alpha.5",
     "@deepseek-ai/dsh-workspace": "0.1.2-alpha.5",
-    "@deepseek-ai/schemastery": "^3.18.0",
+    "@deepseek-ai/schemastery": "^3.18.2",
     "@types/node": "^22.19.0",
     "@vitest/coverage-v8": "4.1.10",
     "oxlint": "0.18.1",

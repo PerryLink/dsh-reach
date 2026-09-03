@@ -4,9 +4,11 @@
  *
  * Phase 1 fills this entry with the real bridge: the deferred-answerer
  * listeners on `approval/request` / `user-questions/request` (card mirror +
- * IM reply resolves the waterfall), the `commands.execute()` passthrough,
- * the channel adapters (weixin iLink first), the outbound ordered queue, and
- * the per-channel security (owner + allowlist fail-closed + audit).
+ * IM reply resolves the held decision promise; timeout policy `next()`
+ * delegate / `'rejected'` fail-closed / keep waiting), the
+ * `commands.execute()` passthrough, the channel adapters (weixin iLink
+ * first), the outbound ordered queue, and the per-channel security (owner +
+ * allowlist fail-closed + audit).
  *
  * Function plugin — no default export (the Loader unwraps
  * `exports.default ?? exports`).
@@ -18,6 +20,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-settings'
+import type {} from '@deepseek-ai/dsh-commands'
 import { Config, resolveConfig } from './config.ts'
 
 export const name = 'reach'
@@ -67,9 +70,9 @@ export function apply(ctx: Context, config: Config): void {
     description: 'Ping the dsh-reach bridge and echo the given text.',
     parameters: {
       text: { type: 'string', required: true, description: 'Text to echo.' },
-    },
+    } as const,
     output: {
-      schema: { type: 'string' },
+      schema: { type: 'string' } as const,
       render: (_args, value) => [{ type: 'text', text: value }],
     },
     async execute(args) {
