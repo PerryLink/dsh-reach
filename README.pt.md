@@ -16,6 +16,12 @@ dsh1024 plugin --profile web add dsh-reach
 
 Reinicie o DSH após a instalação (os patches do bundle são aplicados na inicialização).
 
+## Features (Phase 1)
+
+- Cartões de decisão de qualquer espaço de trabalho espelhados no WeChat com numeração estável; responda com `1`/`2`, `P1=1 P2=2` ou `/rp` `/rq`.
+- Segurança fail-closed: o primeiro remetente é o owner; listas vazias negam todos.
+- Console de sessão (`/status /silent /notify /tasks /enter /history /stop /next /help`) e aba de configurações.
+
 ## Configuration
 
 | Chave | Padrão | Descrição |

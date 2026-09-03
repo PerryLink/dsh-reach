@@ -16,6 +16,12 @@ dsh1024 plugin --profile web add dsh-reach
 
 इंस्टॉल के बाद DSH पुनः प्रारंभ करें (bundle पैच स्टार्टअप पर लागू होते हैं)।
 
+## Features (Phase 1)
+
+- किसी भी वर्कस्पेस के निर्णय कार्ड WeChat पर स्थिर क्रमांकन के साथ भेजे जाते हैं; `1`/`2`, `P1=1 P2=2` या `/rp` `/rq` से उत्तर दें।
+- Fail-closed सुरक्षा: पहला प्रेषक owner बनता है; खाली सूची सभी को अस्वीकार करती है।
+- सेशन कंसोल (`/status /silent /notify /tasks /enter /history /stop /next /help`) और सेटिंग्स टैब।
+
 ## Configuration
 
 | कुंजी | डिफ़ॉल्ट | विवरण |

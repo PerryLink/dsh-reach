@@ -18,6 +18,7 @@ Standalone DeepSeek Harness plugin repository (`dsh-reach`). Development follows
 - **Effect-owning lifecycles.** Every registration (namespace, command, tool, listeners, timers, pollers, routes) rides the plugin fiber; teardown order lives in single disposers where order matters.
 - **No hardcoded tunables.** Every knob is a validated `Config` field documented in `cordis.patch.yml` and the five READMEs.
 - **scoped-cordis single identity.** Only `@deepseek-ai/cordis` (peer + dev, aligned to the host); mixing unscoped `cordis` splits declaration merging. tsdown keeps `@deepseek-ai/*` external.
+- **`dsh-plugin-dev check` deviation (documented).** The `manifest-peers` rule demands exact `/client`-subpath peerDependencies; npm/pnpm reject subpath specifiers as package names, so the root peers (`dsh-api-remotes`, `dsh-client-locale`, `dsh-client-ui-settings`) carry the contract (dsh-talk precedent). The remaining 12 checks pass with 0 warnings; the one deviation is intentional and installability is authoritative.
 
 ## Checks
 
