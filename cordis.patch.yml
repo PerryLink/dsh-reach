@@ -1,0 +1,22 @@
+# dsh-reach bundle patch: mount the multi-channel decision & remote-control
+# bridge. Every key below is a Config field (Schemastery schema); invalid
+# values fail the profile load loudly. See README.md "Configuration" for the
+# full table.
+- insert:
+    - id: reach
+      name: dsh-reach
+      config:
+        # Push decision cards from ANY workspace/session to IM channels
+        # (master switch; per-channel and per-session overrides refine it).
+        crossSessionNotify: true
+        # Background task finished/errored notifications (false = decisions
+        # only; flip live via the settings namespace).
+        notifyTaskEvents: false
+        # Soft timeout for decision cards in seconds (0 = wait forever).
+        cardTimeoutSec: 1800
+        # Long reply chunk limit per channel message, in characters.
+        textChunkLimit: 4000
+        # Silent mode: only final replies, no per-step streaming to IM.
+        silent: false
+        # Default working directory for new IM sessions ('' = host cwd).
+        cwd: ''
