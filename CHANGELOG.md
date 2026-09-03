@@ -10,6 +10,12 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Phase 4 (local closure)**: the contract-drift gate
+  (`check:contract-drift` — asserts the 10 host seams `dsh-reach` depends on
+  still export their required faces against the published peers) and the
+  credential-leak gate (`check:credential-leak` — scans the shipped surface
+  for API-key/Telegram-token/Bearer/bot_token literals); both wired into the
+  check chain and CI.
 - **Phase 3 (part 1) — multi-channel validation**: the Telegram channel
   adapter (fetch-based Bot API long polling, zero SDK dependencies, token
   from the `dsh-reach/telegram-token` credential or the `telegramToken` row
