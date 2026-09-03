@@ -62,6 +62,8 @@ export interface Config {
   digestSec?: number
   /** Optional bearer token for the local push API ('' = loopback-only, no token). */
   pushToken?: string
+  /** Optional Telegram bot token (prefer the dsh-reach/telegram-token credential). */
+  telegramToken?: string
 }
 
 /** Schemastery schema for the loader and the settings namespace. */
@@ -85,6 +87,7 @@ export const Config: Schema<Config> = Schema.object({
   authCode: Schema.string(),
   digestSec: Schema.number().default(300),
   pushToken: Schema.string(),
+  telegramToken: Schema.string(),
 })
 
 /** Fully resolved config: every field present after {@link resolveConfig}. */
@@ -108,6 +111,7 @@ export interface ResolvedConfig {
   readonly authCode: string
   readonly digestSec: number
   readonly pushToken: string
+  readonly telegramToken: string
 }
 
 const APPROVAL_TIMEOUT_MODES: readonly ApprovalTimeoutMode[] = ['delegate', 'reject', 'wait']
@@ -158,5 +162,6 @@ export function resolveConfig(config: Config): ResolvedConfig {
     authCode: config.authCode ?? '',
     digestSec,
     pushToken: config.pushToken ?? '',
+    telegramToken: config.telegramToken ?? '',
   }
 }

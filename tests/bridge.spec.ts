@@ -10,7 +10,7 @@ import { resolveConfig } from '../src/config.ts'
 
 /** Scripted adapter: records outbound sends; inbound driven by the test. */
 class FakeAdapter implements ChannelAdapter {
-  readonly id = 'fake'
+  constructor(readonly id: string = 'fake') {}
   readonly capabilities: ChannelCapabilities = { text: true, image: false, file: false, voice: false, typing: false, cards: false }
   readonly sent: OutboundRequest[] = []
   failNext = false
@@ -97,7 +97,7 @@ function setup(configOverrides: Parameters<typeof resolveConfig>[0] = {}): Harne
   const bridge = new Bridge({
     ctx: ctx as never,
     config: resolveConfig(configOverrides),
-    adapter,
+    adapters: [adapter],
     readState: () => current,
     writeState,
     log: () => {},
@@ -209,7 +209,7 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     const unpaired = new Bridge({
       ctx: new Context() as never,
       config: resolveConfig({}),
-      adapter: none.adapter,
+      adapters: [none.adapter],
       readState: () => ({ ...state, security: { owner: undefined, allowFrom: [] } }),
       writeState: () => {},
       log: () => {},
@@ -236,7 +236,7 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     const unpaired = new Bridge({
       ctx: ctx as never,
       config: resolveConfig({}),
-      adapter: new FakeAdapter(),
+      adapters: [new FakeAdapter()],
       readState: () => current,
       writeState: (next) => { current = next },
       log: () => {},
@@ -352,5 +352,36 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     expect(harness.bridge.busyCount()).toBe(1)
     harness.bridge.onAgentStatus(fakeAgent, 'idle')
     expect(harness.bridge.busyCount()).toBe(0)
+  })
+
+  it('routes numeric chat ids to the telegram adapter and others to weixin', async () => {
+    const ctx = new Context()
+    const weixin = new FakeAdapter('weixin')
+    const telegram = new FakeAdapter('telegram')
+    ctx.provide('agents', makeAgents())
+    let current: ReachRuntimeState = {
+      security: { owner: 'u1', allowFrom: [] },
+      chatSessions: { u1: 'session-1' },
+      workspaceCwd: undefined,
+      delivered: undefined,
+      audit: undefined,
+      silent: undefined,
+      crossSessionNotify: true,
+      notifyTaskEvents: false,
+      queueMode: undefined,
+    }
+    const bridge = new Bridge({
+      ctx: ctx as never,
+      config: resolveConfig({}),
+      adapters: [weixin, telegram],
+      readState: () => current,
+      writeState: (next) => { current = next },
+      log: () => {},
+    })
+    bridge.sendText('u1@im.wechat', 'via weixin')
+    bridge.sendText('12345', 'via telegram')
+    await new Promise((resolve) => setTimeout(resolve, 30))
+    expect(weixin.sent.some((entry) => entry.chatId === 'u1@im.wechat')).toBe(true)
+    expect(telegram.sent.some((entry) => entry.chatId === '12345')).toBe(true)
   })
 })

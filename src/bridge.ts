@@ -50,7 +50,8 @@ export interface ReachRuntimeState {
 export interface BridgeDeps {
   readonly ctx: Context
   readonly config: ResolvedConfig
-  readonly adapter: ChannelAdapter
+  /** Channel adapters in priority order; weixin is the default fallback. */
+  readonly adapters: readonly ChannelAdapter[]
   /** read/write the persisted runtime state. */
   readonly readState: () => ReachRuntimeState
   readonly writeState: (next: ReachRuntimeState) => void
@@ -115,6 +116,24 @@ export class Bridge {
   /** First authorized user (single-user deployments: the owner). */
   firstUser(): string | undefined {
     return this.authorizedUsers()[0]
+  }
+
+  /** Route one chat id to its channel adapter (numeric ids = telegram). */
+  adapterFor(chatId: string): ChannelAdapter {
+    const telegram = this.deps.adapters.find((adapter) => adapter.id === 'telegram')
+    if (telegram && /^[-0-9]+$/u.test(chatId)) return telegram
+    return this.deps.adapters.find((adapter) => adapter.id === 'weixin') ?? this.deps.adapters[0] ?? this.fallbackAdapter
+  }
+
+  private readonly fallbackAdapter: ChannelAdapter = {
+    id: 'null',
+    capabilities: { text: true, image: false, file: false, voice: false, typing: false, cards: false },
+    status: () => ({ phase: 'unconfigured', accountId: undefined, userId: undefined, monitorRunning: false, lastError: undefined }),
+    start: () => {},
+    send: async () => {},
+    login: async () => '',
+    logout: async () => {},
+    typing: async () => {},
   }
 
   /** Whether one sender is currently authorized (owner or allowlisted). */
@@ -615,7 +634,7 @@ export class Bridge {
       if (!entry) break
       this.budgetUsed += 1
       try {
-        await this.deps.adapter.send({ chatId: entry.chatId, parts: [{ type: 'text', text: entry.text }] })
+        await this.adapterFor(entry.chatId).send({ chatId: entry.chatId, parts: [{ type: 'text', text: entry.text }] })
       } catch (error: unknown) {
         // Real iLink limit responses (ret -2 prepare failed) or transport
         // failures: re-queue and stop draining this window.

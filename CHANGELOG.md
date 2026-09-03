@@ -10,6 +10,13 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- **Phase 3 (part 1) — multi-channel validation**: the Telegram channel
+  adapter (fetch-based Bot API long polling, zero SDK dependencies, token
+  from the `dsh-reach/telegram-token` credential or the `telegramToken` row
+  config, deleteWebhook + offset tracking, 401/409 session-invalid surfacing,
+  typing actions); Bridge multi-adapter routing (`adapters` list +
+  `adapterFor(chatId)`, numeric chat ids route to Telegram, everything else
+  to weixin); a fake Bot API server test suite.
 - **Phase 2 — decision & command enhancements**: decision auth code
   (`authCode`, replies must carry `:<code>`); rule-based natural-language
   decisions (全部拒绝 / 全部批准 / 批准第N张 / 同意 …; the LLM fallback stays a

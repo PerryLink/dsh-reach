@@ -35,7 +35,7 @@ function makeBridge(adapter: FakeAdapter): { bridge: Bridge; ctx: Context } {
   const bridge = new Bridge({
     ctx: ctx as never,
     config: resolveConfig({}),
-    adapter,
+    adapters: [adapter],
     readState: () => current,
     writeState: (next) => { current = next },
     log: () => {},

@@ -29,6 +29,7 @@ import type {} from '@deepseek-ai/dsh-session'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import { Config, resolveConfig } from './config.ts'
 import { WeixinAdapter, resolveStorageDir } from './adapters/weixin/weixin.ts'
+import { TelegramAdapter } from './adapters/telegram/telegram.ts'
 import { Bridge, type ReachRuntimeState } from './bridge.ts'
 import type { AuditEntry } from './security.ts'
 import { localCommands } from './commands.ts'
@@ -151,11 +152,17 @@ export function apply(ctx: Context, config: Config): void {
     sessionKey,
     log,
   })
+  const telegram = new TelegramAdapter({
+    credentials: ctx.credentials,
+    sessionKey: credentialKey('dsh-reach', 'telegram-token'),
+    configuredToken: resolved.telegramToken,
+    log,
+  })
 
   const bridge = new Bridge({
     ctx,
     config: resolved,
-    adapter,
+    adapters: [adapter, telegram],
     readState: () => toState(runtimeScope.get() ?? {}),
     writeState: (next) => {
       void runtimeScope.replace(toNamespace(next))
@@ -192,6 +199,15 @@ export function apply(ctx: Context, config: Config): void {
       controller.abort()
     }
   }, 'dsh-reach: weixin monitor')
+
+  // Telegram monitor (no-op while unconfigured).
+  ctx.effect(() => {
+    const tgController = new AbortController()
+    telegram.start(tgController.signal, (message) => bridge.handleInbound(message), () => {
+      log('telegram session invalid — check the bot token')
+    })
+    return () => tgController.abort()
+  }, 'dsh-reach: telegram monitor')
 
   // Remote service for the settings page.
   void ctx.plugin(function mountReachService(serviceCtx: Context): void {
