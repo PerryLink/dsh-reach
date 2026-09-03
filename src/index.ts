@@ -79,7 +79,7 @@ export const RuntimeStateSchema = Schema.object({
   crossSessionNotify: Schema.boolean(),
   notifyTaskEvents: Schema.boolean(),
   queueMode: Schema.union(['queue', 'steer'] as const),
-})
+}) as Schema<RuntimeNamespaceValue>
 
 /** Persisted shape of the runtime namespace (mapped to/from ReachRuntimeState). */
 interface RuntimeNamespaceValue {
