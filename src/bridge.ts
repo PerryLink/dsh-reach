@@ -17,7 +17,8 @@ import type { ApprovalOutcome, ApprovalRequest } from '@deepseek-ai/dsh-user-app
 import type { AskUserQuestionAnswer, AskUserQuestionRequest } from '@deepseek-ai/dsh-user-questions'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
 import { SessionId } from '@deepseek-ai/dsh-session'
-import type { ChannelAdapter, InboundMessage } from './channel.ts'
+import type { ChannelAdapter, ChannelStatus, InboundMessage } from './channel.ts'
+import type { ChannelRegistration, ChannelRegistry } from './registry.ts'
 import {
   parseDecisionReply,
   rejectAllApprovals,
@@ -50,8 +51,14 @@ export interface ReachRuntimeState {
 export interface BridgeDeps {
   readonly ctx: Context
   readonly config: ResolvedConfig
-  /** Channel adapters in priority order; weixin is the default fallback. */
+  /**
+   * Channel adapters in priority order; weixin is the default fallback.
+   * Optional once a {@link ChannelRegistry} is supplied: the registry wins
+   * for routing, this list only backstops registry-less constructions.
+   */
   readonly adapters: readonly ChannelAdapter[]
+  /** Open channel registry (the `reachChannels` service); monitors for its entries are owned by the bridge. */
+  readonly registry?: ChannelRegistry
   /** read/write the persisted runtime state. */
   readonly readState: () => ReachRuntimeState
   readonly writeState: (next: ReachRuntimeState) => void
@@ -95,8 +102,33 @@ export class Bridge {
   private readonly outbound = new Map<string, OutboundEntry[]>()
   private budgetWindowStart = Date.now()
   private budgetUsed = 0
+  /** Monitor disposers per registered channel (startMonitor results). */
+  private readonly monitorDisposers = new Map<ChannelRegistration, () => void>()
+  private stopWatchingRegistry: (() => void) | undefined
 
-  constructor(private readonly deps: BridgeDeps) {}
+  constructor(private readonly deps: BridgeDeps) {
+    if (deps.registry !== undefined) {
+      for (const entry of deps.registry.list()) this.attachChannel(entry)
+      this.stopWatchingRegistry = deps.registry.watch((entry, event) => {
+        if (event === 'add') this.attachChannel(entry)
+        else this.detachChannel(entry)
+      })
+    }
+  }
+
+  /** Start one channel's monitor (no-op without `startMonitor`) and keep its disposer. */
+  private attachChannel(entry: ChannelRegistration): void {
+    if (this.monitorDisposers.has(entry)) return
+    const dispose = entry.startMonitor?.((message) => this.handleInbound(message))
+    this.monitorDisposers.set(entry, dispose ?? (() => {}))
+  }
+
+  private detachChannel(entry: ChannelRegistration): void {
+    const dispose = this.monitorDisposers.get(entry)
+    if (!dispose) return
+    this.monitorDisposers.delete(entry)
+    dispose()
+  }
 
   private state(): ReachRuntimeState {
     return this.deps.readState()
@@ -118,8 +150,10 @@ export class Bridge {
     return this.authorizedUsers()[0]
   }
 
-  /** Route one chat id to its channel adapter (numeric = telegram, oc_ = feishu). */
+  /** Route one chat id to its channel adapter (registry first, then the legacy heuristics). */
   adapterFor(chatId: string): ChannelAdapter {
+    const viaRegistry = this.deps.registry?.resolve(chatId)?.adapter
+    if (viaRegistry) return viaRegistry
     const feishu = this.deps.adapters.find((adapter) => adapter.id === 'feishu')
     if (feishu && chatId.startsWith('oc_')) return feishu
     const telegram = this.deps.adapters.find((adapter) => adapter.id === 'telegram')
@@ -152,7 +186,8 @@ export class Bridge {
    * Unload cleanup: settle every held decision promise so unloading the
    * plugin never strands a pending approval (the answerer chain must keep
    * flowing — settle `'unavailable'` and let the service fail closed), clear
-   * card timers, and drop the in-memory outbound/inbound queues.
+   * card timers, stop every channel monitor, and drop the in-memory
+   * outbound/inbound queues.
    */
   dispose(): void {
     for (const cards of this.pendingByUser.values()) {
@@ -166,6 +201,33 @@ export class Bridge {
     this.outbound.clear()
     this.chatQueues.clear()
     this.runningAgents.clear()
+    for (const dispose of this.monitorDisposers.values()) dispose()
+    this.monitorDisposers.clear()
+    this.stopWatchingRegistry?.()
+    this.stopWatchingRegistry = undefined
+  }
+
+  /** One registered channel by id (registry-backed). */
+  channelById(id: string): ChannelAdapter | undefined {
+    return this.deps.registry?.get(id)?.adapter
+      ?? this.deps.adapters.find((adapter) => adapter.id === id)
+  }
+
+  /** Status rows for every registered channel (settings page multi-channel view). */
+  channelStatuses(): readonly { id: string; phase: ChannelStatus['phase']; accountId: string | undefined; monitorRunning: boolean; lastError: string | undefined }[] {
+    const entries = this.deps.registry !== undefined
+      ? this.deps.registry.list().map((entry) => entry.adapter)
+      : this.deps.adapters
+    return entries.map((adapter) => {
+      const status = adapter.status()
+      return {
+        id: adapter.id,
+        phase: status.phase,
+        accountId: status.accountId,
+        monitorRunning: status.monitorRunning,
+        lastError: status.lastError,
+      }
+    })
   }
 
   /** Replace the sender allowlist (settings page write path). */

@@ -6,6 +6,30 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Open channel registry (`reachChannels`)**: the v2 extension point —
+  `ctx.get('reachChannels').registerChannel({ id, adapter, priority,
+  ownsChatId, startMonitor })` drops a third-party channel into the bridge;
+  routing (priority predicate scan over channel-normalized chat ids),
+  outbound sends, and monitor lifecycle (attach on register, dispose on
+  unregister/`bridge.dispose()`) are all bridge-owned. `bridge.channelStatuses()`
+  feeds the settings-page multi-channel view. Verified by
+  `tests/registry.spec.ts` + registry routing/monitor tests in
+  `tests/bridge.spec.ts`.
+- **v2 channel foundations (QQ / DingTalk / WeCom)**: drop-in adapters on the
+  `ChannelAdapter` contract, each with a transport seam + fake-transport
+  tests. QQ = REST + websocket OpenAPI client on Node built-ins (token +
+  gateway + heartbeat + reconnect, `qq:`/`qq:g:`/`qq:c:` chat ids, CQ-tag
+  stripping); DingTalk = group-robot webhook outbound with HMAC-SHA256
+  signing + conversation-callback normalization (`dt:` ids); WeCom =
+  group-robot webhook outbound + AES-256-CBC callback decrypt (echostr +
+  message frames), XML parsing, and template-card button-click
+  normalization (`wc:` ids). Credentials ride the `dsh-reach/qq-app`,
+  `dsh-reach/dingtalk-webhook`, and `dsh-reach/wecom-webhook` grant records.
+  Real-device verification is pending (documented). Built-in channels now
+  register through the same registry path.
+
 ## [0.1.1] — 2026-09-03
 
 ### Added

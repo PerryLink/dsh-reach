@@ -70,6 +70,8 @@ export function ReachSettingsTab(props: ReachSettingsTabProps): ReactElement {
       status.userId ? row(t('user'), status.userId) : null,
       row(t('pending'), String(status.pendingCards)),
       row(t('queue'), String(status.outboundQueue)),
+      ...(status.channels ?? []).map((channel) =>
+        row(`channel ${channel.id}`, `${channel.phase}${channel.monitorRunning ? ' · running' : ''}${channel.lastError ? ` · ${channel.lastError}` : ''}`)),
     ) : null,
     createElement('div', { className: 'reach-switches' },
       toggle(t('silent'), silent, setSilent),

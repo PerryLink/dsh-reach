@@ -22,6 +22,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import Schema from '@deepseek-ai/schemastery'
 import { credentialKey, type CredentialProvider } from '@deepseek-ai/dsh-credentials'
+import type { InboundMessage } from './channel.ts'
 import type {} from '@deepseek-ai/dsh-credentials'
 import type {} from '@deepseek-ai/dsh-tools'
 import type {} from '@deepseek-ai/dsh-settings'
@@ -36,6 +37,19 @@ import { Config, resolveConfig } from './config.ts'
 import { WeixinAdapter, resolveStorageDir } from './adapters/weixin/weixin.ts'
 import { TelegramAdapter } from './adapters/telegram/telegram.ts'
 import { FeishuAdapter, sdkTransport } from './adapters/feishu/feishu.ts'
+import {
+  QqAdapter, restTransport as qqRestTransport, normalizeQqEvent, parseQqChatId, stripCqTags,
+  type QqAppGrant, type QqEvent, type QqTransport,
+} from './adapters/qq/qq.ts'
+import {
+  DingTalkAdapter, webhookTransport as dingtalkWebhookTransport, dingTalkSign, normalizeDingTalkEvent,
+  type DingTalkEvent, type DingTalkTransport, type DingTalkWebhookGrant,
+} from './adapters/dingtalk/dingtalk.ts'
+import {
+  WeComAdapter, webhookTransport as wecomWebhookTransport, decryptWeCom, decryptEchoStr, parseWeComXml, normalizeWeComEvent,
+  type WeComTransport, type WeComWebhookGrant,
+} from './adapters/wecom/wecom.ts'
+import { ChannelRegistry, type ChannelRegistration, type ReachChannelsFace } from './registry.ts'
 import { Bridge, type ReachRuntimeState } from './bridge.ts'
 import type { AuditEntry } from './security.ts'
 import { localCommands } from './commands.ts'
@@ -54,6 +68,21 @@ export { Config, resolveConfig, type Config as ReachConfig, type ResolvedConfig 
 export { WeixinAdapter } from './adapters/weixin/weixin.ts'
 export { TelegramAdapter } from './adapters/telegram/telegram.ts'
 export { FeishuAdapter, sdkTransport, renderDecisionCard, decisionTextFromButtonValue } from './adapters/feishu/feishu.ts'
+export {
+  QqAdapter, qqRestTransport, normalizeQqEvent, parseQqChatId, stripCqTags,
+  type QqAppGrant, type QqEvent, type QqTransport,
+}
+export {
+  DingTalkAdapter, dingtalkWebhookTransport, dingTalkSign, normalizeDingTalkEvent,
+  type DingTalkEvent, type DingTalkTransport, type DingTalkWebhookGrant,
+}
+export {
+  WeComAdapter, wecomWebhookTransport, decryptWeCom, decryptEchoStr, parseWeComXml, normalizeWeComEvent,
+  type WeComTransport, type WeComWebhookGrant,
+}
+export {
+  ChannelRegistry, type ChannelRegistration, type ReachChannelsFace, type RegistryEvent,
+} from './registry.ts'
 export { Bridge, type ReachRuntimeState } from './bridge.ts'
 export {
   parseDecisionReply, renderApprovalCard, renderQuestionCard, shortToken,
@@ -218,9 +247,14 @@ export function apply(ctx: Context, config: Config): void {
     sessionKey,
     log,
   })
+  const telegramKey = credentialKey('dsh-reach', 'telegram-token')
+  const feishuKey = credentialKey('dsh-reach', 'feishu-app')
+  const qqKey = credentialKey('dsh-reach', 'qq-app')
+  const dingtalkKey = credentialKey('dsh-reach', 'dingtalk-webhook')
+  const wecomKey = credentialKey('dsh-reach', 'wecom-webhook')
   const telegram = new TelegramAdapter({
     credentials: credentials ?? nullCredentials,
-    sessionKey: credentialKey('dsh-reach', 'telegram-token'),
+    sessionKey: telegramKey,
     configuredToken: resolved.telegramToken,
     log,
   })
@@ -229,15 +263,69 @@ export function apply(ctx: Context, config: Config): void {
     appSecret: '',
     requireMention: true,
     credentials: credentials ?? nullCredentials,
-    sessionKey: credentialKey('dsh-reach', 'feishu-app'),
+    sessionKey: feishuKey,
     transport: sdkTransport(() => feishu.credentials(), log),
     log,
   })
+  const qq = new QqAdapter({
+    credentials: credentials ?? nullCredentials,
+    sessionKey: qqKey,
+    transport: qqRestTransport(() => qq.credentials(), log),
+    log,
+  })
+  const dingtalk = new DingTalkAdapter({
+    credentials: credentials ?? nullCredentials,
+    sessionKey: dingtalkKey,
+    transport: dingtalkWebhookTransport(() => dingtalk.grant(), log),
+    log,
+  })
+  const wecom = new WeComAdapter({
+    credentials: credentials ?? nullCredentials,
+    sessionKey: wecomKey,
+    transport: wecomWebhookTransport(() => ({ webhookUrl: wecom.webhook() }), log),
+    log,
+  })
+
+  // Open channel registry: every channel (built-in + third-party) gets the
+  // same routing, outbound, and monitor treatment through one extension point.
+  const registry = new ChannelRegistry()
+  const monitorFor = (
+    id: string,
+    channel: { start(signal: AbortSignal, onMessage: (message: InboundMessage) => void, onSessionInvalid: () => void): void },
+    invalidNote: string,
+    restartKey: ReturnType<typeof credentialKey> | undefined,
+  ): Pick<ChannelRegistration, 'startMonitor'> => ({
+    startMonitor: (handleInbound) => {
+      let controller = new AbortController()
+      const restart = (): void => {
+        controller.abort()
+        controller = new AbortController()
+        channel.start(controller.signal, handleInbound, () => log(`${id} ${invalidNote}`))
+      }
+      restart()
+      const disposeListener = credentials !== undefined && restartKey !== undefined
+        ? ctx.on('credentials/record-updated', (key: unknown) => {
+            if (key === restartKey) restart()
+          })
+        : undefined
+      return () => {
+        controller.abort()
+        disposeListener?.()
+      }
+    },
+  })
+  registry.registerChannel({ id: 'telegram', adapter: telegram, priority: 1, ownsChatId: (chatId) => /^[-0-9]+$/u.test(chatId), ...monitorFor('telegram', telegram, 'session invalid — check the bot token', telegramKey) })
+  registry.registerChannel({ id: 'feishu', adapter: feishu, priority: 2, ownsChatId: (chatId) => chatId.startsWith('oc_'), ...monitorFor('feishu', feishu, 'session invalid — check the app credentials', feishuKey) })
+  registry.registerChannel({ id: 'qq', adapter: qq, priority: 3, ownsChatId: (chatId) => chatId.startsWith('qq:'), ...monitorFor('qq', qq, 'session invalid — check the qq-app grant', qqKey) })
+  registry.registerChannel({ id: 'dingtalk', adapter: dingtalk, priority: 3, ownsChatId: (chatId) => chatId.startsWith('dt:'), ...monitorFor('dingtalk', dingtalk, 'session invalid — check the webhook grant', dingtalkKey) })
+  registry.registerChannel({ id: 'wecom', adapter: wecom, priority: 3, ownsChatId: (chatId) => chatId.startsWith('wc:'), ...monitorFor('wecom', wecom, 'session invalid — check the webhook grant', wecomKey) })
+  registry.registerChannel({ id: 'weixin', adapter, priority: 0, ownsChatId: () => true, ...monitorFor('weixin', adapter, 'session invalid — waiting for re-scan', sessionKey) })
 
   const bridge = new Bridge({
     ctx,
     config: resolved,
-    adapters: [adapter, telegram, feishu],
+    adapters: [],
+    registry,
     readState,
     writeState,
     log,
@@ -251,49 +339,13 @@ export function apply(ctx: Context, config: Config): void {
   ctx.on('agent/error', ({ agent }) => bridge.onAgentError(agent))
   ctx.on('agent/status', ({ agent, status }) => bridge.onAgentStatus(agent, status))
 
-  // Unload safety: never strand a pending decision.
+  // Unload safety: never strand a pending decision; also stops every
+  // channel monitor the bridge attached (registry watch + startMonitor).
   ctx.effect(() => () => bridge.dispose(), 'dsh-reach: bridge disposal')
 
-  // Weixin monitor (restarts on token changes; the record-updated listener is
-  // disposed WITH the effect — no leak on unload).
-  ctx.effect(() => {
-    let controller = new AbortController()
-    const restart = (): void => {
-      controller.abort()
-      controller = new AbortController()
-      adapter.start(controller.signal, (message) => bridge.handleInbound(message), () => {
-        log('weixin session invalid — waiting for re-scan')
-      })
-    }
-    restart()
-    const disposeListener = credentials !== undefined
-      ? ctx.on('credentials/record-updated', (key: unknown) => {
-          if (key === sessionKey) restart()
-        })
-      : undefined
-    return () => {
-      controller.abort()
-      disposeListener?.()
-    }
-  }, 'dsh-reach: weixin monitor')
-
-  // Telegram monitor (no-op while unconfigured).
-  ctx.effect(() => {
-    const tgController = new AbortController()
-    telegram.start(tgController.signal, (message) => bridge.handleInbound(message), () => {
-      log('telegram session invalid — check the bot token')
-    })
-    return () => tgController.abort()
-  }, 'dsh-reach: telegram monitor')
-
-  // Feishu monitor (no-op until the feishu-app grant is configured).
-  ctx.effect(() => {
-    const fsController = new AbortController()
-    feishu.start(fsController.signal, (message) => bridge.handleInbound(message), () => {
-      log('feishu session invalid — check the app credentials')
-    })
-    return () => fsController.abort()
-  }, 'dsh-reach: feishu monitor')
+  // The open extension point: third-party plugins call
+  // `ctx.get('reachChannels')?.registerChannel(...)` to drop a channel in.
+  ctx.effect(() => ctx.provide('reachChannels', registry as ReachChannelsFace), 'dsh-reach: reachChannels service')
 
   // Remote service for the settings page.
   void ctx.plugin(function mountReachService(serviceCtx: Context): void {

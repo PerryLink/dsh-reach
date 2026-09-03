@@ -8,6 +8,16 @@
 import { z } from 'zod'
 import type { InvocationDescriptor } from '@deepseek-ai/dsh-typert-protocol'
 
+export const reachChannelStatusSchema = z.object({
+  id: z.string(),
+  phase: z.enum(['unconfigured', 'logged-out', 'waiting-scan', 'scanned', 'logged-in', 'failed']),
+  accountId: z.string().optional(),
+  monitorRunning: z.boolean(),
+  lastError: z.string().optional(),
+})
+
+export type ReachChannelStatus = z.infer<typeof reachChannelStatusSchema>
+
 export const reachStatusSchema = z.object({
   phase: z.enum(['unconfigured', 'logged-out', 'waiting-scan', 'scanned', 'logged-in', 'failed']),
   accountId: z.string().optional(),
@@ -20,6 +30,7 @@ export const reachStatusSchema = z.object({
   crossSessionNotify: z.boolean(),
   notifyTaskEvents: z.boolean(),
   queueMode: z.enum(['queue', 'steer']),
+  channels: z.array(reachChannelStatusSchema),
 })
 
 export type ReachStatus = z.infer<typeof reachStatusSchema>

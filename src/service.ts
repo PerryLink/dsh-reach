@@ -51,6 +51,7 @@ export class ReachService extends TypertRemoteService {
       crossSessionNotify: this.bridge.notifyGate() === 'on',
       notifyTaskEvents: this.bridge.taskEventsGate() === 'on',
       queueMode: this.bridge.queueMode(),
+      channels: [...this.bridge.channelStatuses()],
     }
   }
 

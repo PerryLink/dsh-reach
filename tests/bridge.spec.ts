@@ -5,6 +5,7 @@ import type { ApprovalRequest, ApprovalOutcome } from '@deepseek-ai/dsh-user-app
 import type { AskUserQuestionRequest } from '@deepseek-ai/dsh-user-questions'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
 import { Bridge, type ReachRuntimeState } from '../src/bridge.ts'
+import { ChannelRegistry } from '../src/registry.ts'
 import type { ChannelAdapter, ChannelCapabilities, ChannelStatus, OutboundRequest } from '../src/channel.ts'
 import { resolveConfig } from '../src/config.ts'
 
@@ -393,5 +394,88 @@ describe('dsh-reach bridge — decision mirror (the 19-patch behaviors)', () => 
     await new Promise((resolve) => setTimeout(resolve, 30))
     expect(weixin.sent.some((entry) => entry.chatId === 'u1@im.wechat')).toBe(true)
     expect(telegram.sent.some((entry) => entry.chatId === '12345')).toBe(true)
+  })
+
+  // ── Channel registry (v2 extension point) ───────────────────────────────
+
+  function makeRegistryBridge(registry: ChannelRegistry): Bridge {
+    const ctx = new Context()
+    ctx.provide('agents', makeAgents())
+    let current: ReachRuntimeState = {
+      security: { owner: 'u1', allowFrom: [] },
+      chatSessions: { u1: 'session-1' },
+      workspaceCwd: undefined,
+      delivered: undefined,
+      audit: undefined,
+      silent: undefined,
+      crossSessionNotify: true,
+      notifyTaskEvents: false,
+      queueMode: undefined,
+    }
+    return new Bridge({
+      ctx: ctx as never,
+      config: resolveConfig({}),
+      adapters: [],
+      registry,
+      readState: () => current,
+      writeState: (next) => { current = next },
+      log: () => {},
+    })
+  }
+
+  it('routes chat ids through the registry and reports per-channel statuses', async () => {
+    const registry = new ChannelRegistry()
+    registry.registerChannel({ id: 'qq', adapter: new FakeAdapter('qq'), priority: 3, ownsChatId: (chatId) => chatId.startsWith('qq:') })
+    registry.registerChannel({ id: 'fallback', adapter: new FakeAdapter('fallback'), priority: 0, ownsChatId: () => true })
+    const bridge = makeRegistryBridge(registry)
+    expect(bridge.adapterFor('qq:OPENID').id).toBe('qq')
+    expect(bridge.adapterFor('anything').id).toBe('fallback')
+    expect(bridge.channelById('qq')?.id).toBe('qq')
+    const statuses = bridge.channelStatuses()
+    expect(statuses.map((entry) => entry.id)).toEqual(['qq', 'fallback'])
+    expect(statuses[0]).toMatchObject({ phase: 'logged-in', monitorRunning: true })
+  })
+
+  it('attaches monitors for registered channels and tears them down on dispose', async () => {
+    const registry = new ChannelRegistry()
+    const started: string[] = []
+    const stopped: string[] = []
+    registry.registerChannel({
+      id: 'qq',
+      adapter: new FakeAdapter('qq'),
+      priority: 3,
+      ownsChatId: (chatId) => chatId.startsWith('qq:'),
+      startMonitor: () => {
+        started.push('qq')
+        return () => stopped.push('qq')
+      },
+    })
+    const bridge = makeRegistryBridge(registry)
+    expect(started).toEqual(['qq'])
+    bridge.dispose()
+    expect(stopped).toEqual(['qq'])
+  })
+
+  it('attaches monitors for channels registered after construction and detaches on unregister', () => {
+    const registry = new ChannelRegistry()
+    const bridge = makeRegistryBridge(registry)
+    const started: string[] = []
+    const stopped: string[] = []
+    const dispose = registry.registerChannel({
+      id: 'dingtalk',
+      adapter: new FakeAdapter('dingtalk'),
+      priority: 3,
+      ownsChatId: (chatId) => chatId.startsWith('dt:'),
+      startMonitor: () => {
+        started.push('dingtalk')
+        return () => stopped.push('dingtalk')
+      },
+    })
+    expect(started).toEqual(['dingtalk'])
+    expect(bridge.adapterFor('dt:1').id).toBe('dingtalk')
+    dispose()
+    expect(stopped).toEqual(['dingtalk'])
+    expect(bridge.adapterFor('dt:1').id).toBe('null')
+    bridge.dispose()
   })
 })
