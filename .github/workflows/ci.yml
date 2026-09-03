@@ -53,5 +53,11 @@ jobs:
       - name: Verify built artifacts
         run: pnpm run verify:artifacts
 
+      - name: Check contract drift (published peers)
+        run: pnpm run check:contract-drift
+
+      - name: Check credential leak (shipped surface)
+        run: pnpm run check:credential-leak
+
       - name: Pack
         run: pnpm pack

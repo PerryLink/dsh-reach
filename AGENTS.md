@@ -25,7 +25,7 @@ Standalone DeepSeek Harness plugin repository (`dsh-reach`). Development follows
 
 ## Checks
 
-`pnpm run typecheck && pnpm run typecheck:ci && pnpm test && pnpm run lint && pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts && pnpm run check:readmes && pnpm pack`. The plain `typecheck` resolves the local checkout through tsconfig `paths`; `typecheck:ci` resolves the npm-published faces — keep both green. CI 标配: Scorecard, compat (bare-import + scratch-profile mount + keyless smoke + uninstall), release gate (changelog names the tag version).
+`pnpm run typecheck && pnpm run typecheck:ci && pnpm test && pnpm run lint && pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts && pnpm run check:readmes && pnpm run check:contract-drift && pnpm run check:credential-leak && pnpm pack`. The plain `typecheck` resolves the local checkout through tsconfig `paths`; `typecheck:ci` resolves the npm-published faces — keep both green. `check:contract-drift` asserts the 10 host seams against the published peers (abstract seam methods are asserted by seam identity only); `check:credential-leak` scans the shipped surface for credential literals. CI 标配: Scorecard, compat (bare-import + scratch-profile mount + keyless smoke + uninstall), release gate (changelog names the tag version).
 
 ## Docs
 

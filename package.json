@@ -223,7 +223,9 @@
     "check:readmes": "node scripts/check-readme-sync.mjs",
     "prepare": "node scripts/prepare.mjs",
     "verify:self-contained": "node scripts/verify-self-contained.mjs",
-    "verify:artifacts": "node scripts/verify-artifacts.mjs"
+    "verify:artifacts": "node scripts/verify-artifacts.mjs",
+    "check:contract-drift": "node scripts/check-contract-drift.mjs",
+    "check:credential-leak": "node scripts/check-credential-leak.mjs"
   },
   "license": "Apache-2.0",
   "funding": {
