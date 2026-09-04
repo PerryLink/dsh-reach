@@ -2,7 +2,7 @@
 
 Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envía las tarjetas de aprobación/pregunta de cualquier espacio de trabajo a canales IM (WeChat iLink, Telegram, Feishu — más las bases v2 de QQ/DingTalk/WeCom) y permite responderlas desde el chat, con consola de sesión, seguridad por canal y un servicio abierto de notificaciones.
 
-> **Estado: Fases 1–3 completas (canales WeChat + Telegram + Feishu, v0.1.1); bases de canales v2 (QQ/DingTalk/WeCom) sobre el registro abierto `reachChannels`.**
+> **Estado: Fases 1–3 completas (canales WeChat + Telegram + Feishu, v0.1.2); bases de canales v2 (QQ/DingTalk/WeCom) sobre el registro abierto `reachChannels`.**
 > El plan de diseño, la investigación de la competencia, la verificación de
 > contratos oficiales y la hoja de ruta están en
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
