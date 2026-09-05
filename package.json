@@ -71,7 +71,7 @@
       "touchesCurrentBeforeActivation": false
     },
     "lifecycle": {
-      "activation": "restart",
+      "activation": "restart-profile",
       "dispose": "supported"
     },
     "permissions": [
