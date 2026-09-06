@@ -49,6 +49,10 @@ pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts
 pnpm run check:readmes && pnpm pack
 ```
 
+### DSH Desktop मार्केट से इंस्टॉल करें
+
+सभी PerryLink प्लगइन DSH Desktop के बिल्ट-इन मार्केट में देखे जा सकते हैं: **Market → Sources → add source → पेस्ट करें** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ चुनें**। इंस्टॉलेशन मार्केट के npm-identity सत्यापन और आपकी पुष्टि से ही होता है।
+
 ## License
 
 Apache-2.0। तृतीय-पक्ष सूचनाएँ [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) में।

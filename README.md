@@ -73,6 +73,10 @@ pnpm run build && pnpm run verify:self-contained && pnpm run verify:artifacts
 pnpm run check:readmes && pnpm pack
 ```
 
+### Install from the DSH Desktop Market
+
+All PerryLink plugins are browsable in the built-in DSH Desktop Market: **Market → Sources → add source → paste** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ select it**. Installation still goes through the Market's npm-identity verification and your confirmation.
+
 ## License
 
 Apache-2.0. Third-party notices in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
