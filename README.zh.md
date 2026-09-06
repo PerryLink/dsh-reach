@@ -14,6 +14,13 @@
 > 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
 
+## 兼容性
+
+| 方面 | 状态 |
+|---|---|
+| Harness | DeepSeek Harness **dsh-v0.1.3-alpha.1**（GitHub tag）。npm 依赖线钉在 `@deepseek-ai/dsh` **0.1.2-rc.1**（peers `>=0.1.2-rc.1 <0.2.0`）。已于 2026-09-06 对照 dsh-v0.1.3-alpha.1 master checkout 核验（完整门禁链 + profile 安装冒烟）。 |
+| Node | `^22.19.0 \|\| >=24.0.0` |
+
 ## Features (Phase 1)
 
 - **跨会话决策推送**：任意工作区的审批/提问卡镜像到微信（iLink/ClawBot），带稳定 `#token` 卡号与 `P{n}` 编号；回复 `1/2`、`P1=1 P2=2`、`P1=Q1=2` 或 `/rp` `/rq`——经原生 pending 瀑布应答（与 GUI 谁先回复谁生效）。

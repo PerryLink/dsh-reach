@@ -16,6 +16,13 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
 > Release (GitHub repo + npm publish) follows in a dedicated session.
 
+## Compatibility
+
+| Surface | Status |
+|---|---|
+| Harness | DeepSeek Harness **dsh-v0.1.3-alpha.1** (GitHub tag). npm dependency line: `@deepseek-ai/dsh` **0.1.2-rc.1** (peers `>=0.1.2-rc.1 <0.2.0`). Verified 2026-09-06 against the dsh-v0.1.3-alpha.1 master checkout (full gate chain + profile install smoke). |
+| Node | `^22.19.0 \|\| >=24.0.0` |
+
 ## Features (Phase 1)
 
 - **Cross-session decision push**: approval/question cards from ANY workspace

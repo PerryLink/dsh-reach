@@ -24,6 +24,13 @@ dsh1024 plugin --profile web add dsh-reach
 
 Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar).
 
+## Compatibilidad
+
+| Superficie | Estado |
+|---|---|
+| Harness | DeepSeek Harness **dsh-v0.1.3-alpha.1** (tag de GitHub). Línea npm fijada en `@deepseek-ai/dsh` **0.1.2-rc.1** (peers `>=0.1.2-rc.1 <0.2.0`). Verificado el 2026-09-06 contra el checkout master dsh-v0.1.3-alpha.1 (cadena completa de gates + smoke de instalación de perfil). |
+| Node | `^22.19.0 \|\| >=24.0.0` |
+
 ## Features (Phase 1)
 
 - Tarjetas de decisión de cualquier espacio de trabajo enviadas a WeChat con numeración estable; respuesta con `1`/`2`, `P1=1 P2=2` o `/rp` `/rq`.

@@ -24,6 +24,13 @@ dsh1024 plugin --profile web add dsh-reach
 
 Reinicie o DSH após a instalação (os patches do bundle são aplicados na inicialização).
 
+## Compatibilidade
+
+| Superfície | Status |
+|---|---|
+| Harness | DeepSeek Harness **dsh-v0.1.3-alpha.1** (tag do GitHub). Linha npm fixada em `@deepseek-ai/dsh` **0.1.2-rc.1** (peers `>=0.1.2-rc.1 <0.2.0`). Verificado em 2026-09-06 contra o checkout master dsh-v0.1.3-alpha.1 (cadeia completa de gates + smoke de instalação de perfil). |
+| Node | `^22.19.0 \|\| >=24.0.0` |
+
 ## Features (Phase 1)
 
 - Cartões de decisão de qualquer espaço de trabalho espelhados no WeChat com numeração estável; responda com `1`/`2`, `P1=1 P2=2` ou `/rp` `/rq`.
