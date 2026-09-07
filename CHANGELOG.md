@@ -10,6 +10,17 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 - Align the devDependency pins to the published dsh `0.1.2-rc.1` line (26 `@deepseek-ai/dsh-*` packages), the `dshWorkshop` compatibility list, and the compat workflow's CLI/base/headless installs; the five-language README status lines move to v0.1.2. No behavior change (the seam re-check on the 0.1.3-alpha.1 checkout found no consumer-facing break; `Session.append` keeps its surface-only third parameter).
 
+## [0.1.3] - 2026-09-07
+
+### Fixed
+
+- dshWorkshop manifest: declare the valid `restart-profile` lifecycle activation for omdsh hub intake.
+- Align the `@deepseek-ai/dsh-*` peer ranges to `>=0.1.2-rc.1 <0.2.0`: the older `>=0.1.0-rc.8 <0.2.0` band resolved to only the `0.1.0-rc.8` prerelease under registry-driven resolution and broke fresh tarball installs; no behavior change.
+
+### Docs
+
+- Refresh the five-language README support-version wording (GitHub tag `dsh-v0.1.3-alpha.1` leads, npm `0.1.2-rc.1` stays the dependency-pin line) and add the DSH Desktop Market install note; no behavior change.
+
 ## [Unreleased]
 
 ### Added
