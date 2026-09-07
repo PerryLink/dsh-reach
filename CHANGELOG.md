@@ -21,6 +21,12 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 - Refresh the five-language README support-version wording (GitHub tag `dsh-v0.1.3-alpha.1` leads, npm `0.1.2-rc.1` stays the dependency-pin line) and add the DSH Desktop Market install note; no behavior change.
 
+## [0.1.4] - 2026-09-07
+
+### Docs
+
+- Fix the DSH plugin badge URL: shields.io rejects the four-segment static badge form with "404 badge not found"; the label now uses the documented double-dash form (`dsh--plugin`), rendering identically; no behavior change.
+
 ## [Unreleased]
 
 ### Added
