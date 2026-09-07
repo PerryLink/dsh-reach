@@ -90,6 +90,8 @@ export {
 } from './decision.ts'
 export { chunkText, type ChannelAdapter, type InboundMessage, type MessagePart } from './channel.ts'
 
+// Service Definition — RuntimeStateSchema: the `reach-runtime` settings
+// namespace contract shared by the settings face and the bridge.
 /** Runtime-state schema (settings namespace `reach-runtime`). */
 export const RuntimeStateSchema = Schema.object({
   security: Schema.object({
@@ -208,6 +210,8 @@ export function apply(ctx: Context, config: Config): void {
   const log = (message: string): void => ctx.logger.info(`dsh-reach: ${message}`)
   const storageDir = resolveStorageDir('')
 
+  // Consumer — consume the optional host services through `ctx.get` and
+  // degrade each feature surface when its seam is absent.
   const settings = ctx.get('settings') as SettingsFace | undefined
   const tools = ctx.get('tools') as ToolsFace | undefined
   const credentials = ctx.get('credentials') as CredentialProvider | undefined
@@ -343,7 +347,7 @@ export function apply(ctx: Context, config: Config): void {
   // channel monitor the bridge attached (registry watch + startMonitor).
   ctx.effect(() => () => bridge.dispose(), 'dsh-reach: bridge disposal')
 
-  // The open extension point: third-party plugins call
+  // Service Provider — the open extension point: third-party plugins call
   // `ctx.get('reachChannels')?.registerChannel(...)` to drop a channel in.
   ctx.effect(() => ctx.provide('reachChannels', registry as ReachChannelsFace), 'dsh-reach: reachChannels service')
 
