@@ -27,7 +27,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 | सतह | स्थिति |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.3-alpha.1** (GitHub tag)। npm डिपेंडेंसी लाइन: `@deepseek-ai/dsh` **0.1.2-rc.1** (peers `>=0.1.2-rc.1 <0.2.0`)। 2026-09-06 को dsh-v0.1.3-alpha.1 master checkout के विरुद्ध सत्यापित (पूर्ण gate chain + profile install smoke)। |
+| Harness | DeepSeek Harness **dsh-v0.1.5-alpha.1** (GitHub tag)। npm डिपेंडेंसी लाइन: `@deepseek-ai/dsh` **0.1.2-rc.1** (peers `>=0.1.2-rc.1 <0.2.0 || >=0.1.5-alpha.1 <0.2.0`)। 2026-09-09 को dsh-v0.1.5-alpha.1 master checkout के विरुद्ध सत्यापित (पूर्ण gate chain + profile install smoke)। |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
