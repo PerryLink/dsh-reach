@@ -10,6 +10,8 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 - Four `@deepseek-ai/*` packages were marked optional peers while `lib/index.js` imports them statically: `dsh-credentials`, `dsh-llm`, `dsh-session` and `dsh-typert-protocol`. A static top-level import is resolved at load, so a bare install (which does not install optional peers) failed with `ERR_MODULE_NOT_FOUND: Cannot find package '@deepseek-ai/dsh-credentials'`. They are now required peers, matching `dsh-draw` and `dsh-github`, which value-import `dsh-credentials` the same way. Verified by packing the tarball into an empty project: `import('dsh-reach')` now resolves (was `ERR_MODULE_NOT_FOUND`).
 
+- The Compat **bare-import** job could never reach its assertion: the scratch project had no `pnpm-workspace.yaml`, so `pnpm add` exited 1 with `ERR_PNPM_IGNORED_BUILDS` (the peer tree pulls in `protobufjs`, which has an install script). Its message goes to stdout, which the step redirects to `/dev/null`, so `set -e` killed the step silently. The scratch project now declares the same `allowBuilds` allowlist the sibling repos use.
+
 ## [0.1.6] - 2026-09-10
 
 ### Changed

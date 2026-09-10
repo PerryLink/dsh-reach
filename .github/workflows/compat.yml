@@ -40,6 +40,22 @@ jobs:
           TARBALL="$(ls "$RUNNER_TEMP"/dsh-reach-*.tgz | head -n1)"
           mkdir -p "$RUNNER_TEMP/bare" && cd "$RUNNER_TEMP/bare"
           pnpm init >/dev/null
+          # The harness peer tree carries packages with install scripts. Without allowBuilds,
+          # `pnpm add` exits 1 with ERR_PNPM_IGNORED_BUILDS while its message goes to stdout -
+          # which is redirected to /dev/null here - so `set -e` killed the step before the
+          # import smoke ever ran, hiding the real result.
+          cat > pnpm-workspace.yaml <<'YAML'
+          packages:
+            - .
+          nodeLinker: hoisted
+          autoInstallPeers: true
+          allowBuilds:
+            '@deepseek-ai/dsh-subprocess-local': true
+            koffi: true
+            node-pty: true
+            protobufjs: true
+            '@google/genai': true
+          YAML
           pnpm add "$TARBALL" >/dev/null
           node --input-type=module -e "import('dsh-reach').then(()=>process.exit(0)).catch(e=>{console.error(e);process.exit(1)})"
   profile:
