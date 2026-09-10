@@ -15,7 +15,7 @@ const PATTERNS = [
   { label: 'ilink bot_token blob', regex: /["']bot_token["']\s*:\s*["'][A-Za-z0-9_-]{20,}["']/gu },
 ]
 
-const SCAN_ROOTS = ['lib', 'cordis.patch.yml', 'README.md', 'README.zh.md', 'README.es.md', 'README.pt.md', 'README.hi.md', 'CHANGELOG.md', 'AGENTS.md', 'ARCHITECTURE.md', 'docs']
+const SCAN_ROOTS = ['lib', 'cordis.patch.yml', 'README.md', 'README-zh.md', 'README-es.md', 'README-pt.md', 'README-hi.md', 'CHANGELOG.md', 'AGENTS.md', 'ARCHITECTURE.md', 'docs']
 
 const collect = (dir) => {
   const out = []

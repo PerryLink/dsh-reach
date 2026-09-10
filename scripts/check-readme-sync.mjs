@@ -8,7 +8,7 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const pkg = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'))
 const version = pkg.version
 
-const files = ['README.md', 'README.zh.md', 'README.es.md', 'README.pt.md', 'README.hi.md']
+const files = ['README.md', 'README-zh.md', 'README-es.md', 'README-pt.md', 'README-hi.md']
 const failures = []
 for (const file of files) {
   const full = path.join(root, file)
