@@ -10,6 +10,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 
 - The release workflow claimed provenance but never passed the flag: it runs `npm publish --access public`, and npm only attests a token-based publish when `--provenance` is given explicitly. The publish step is now `npm publish --access public --provenance`, matching `dsh-github` and `dsh-plugin-guide`. Takes effect from the next release; an already-published version cannot gain attestations retroactively.
+
+### Docs
+
+- Repair the CHANGELOG structure: a second `## [Unreleased]` heading sat between `[0.1.4]` and `[0.1.1]`, two version sections were out of order, and the top `[Unreleased]` entry ran straight into the next heading. The orphaned entries describe `be59114` (the open `reachChannels` registry plus the QQ/DingTalk/WeCom v2 foundations), which is an ancestor of `v0.1.2` and not of `v0.1.1`, so they now live under `[0.1.2]` where they shipped. Every other entry is unchanged and only moved; the two oldest headings now use the same `- <date>` form as the rest.
+
 ## [0.1.7] - 2026-09-10
 
 ### Fixed
@@ -39,11 +44,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 - Refresh the five-language README compatibility baseline to `dsh-v0.1.5-alpha.1` (verified 2026-09-09).
 
-## [0.1.2] - 2026-09-04
+## [0.1.4] - 2026-09-07
 
-### Changed
+### Docs
 
-- Align the devDependency pins to the published dsh `0.1.2-rc.1` line (26 `@deepseek-ai/dsh-*` packages), the `dshWorkshop` compatibility list, and the compat workflow's CLI/base/headless installs; the five-language README status lines move to v0.1.2. No behavior change (the seam re-check on the 0.1.3-alpha.1 checkout found no consumer-facing break; `Session.append` keeps its surface-only third parameter).
+- Fix the DSH plugin badge URL: shields.io rejects the four-segment static badge form with "404 badge not found"; the label now uses the documented double-dash form (`dsh--plugin`), rendering identically; no behavior change.
 
 ## [0.1.3] - 2026-09-07
 
@@ -56,13 +61,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 - Refresh the five-language README support-version wording (GitHub tag `dsh-v0.1.3-alpha.1` leads, npm `0.1.2-rc.1` stays the dependency-pin line) and add the DSH Desktop Market install note; no behavior change.
 
-## [0.1.4] - 2026-09-07
-
-### Docs
-
-- Fix the DSH plugin badge URL: shields.io rejects the four-segment static badge form with "404 badge not found"; the label now uses the documented double-dash form (`dsh--plugin`), rendering identically; no behavior change.
-
-## [Unreleased]
+## [0.1.2] - 2026-09-04
 
 ### Added
 
@@ -88,7 +87,11 @@ project adheres to [Semantic Versioning](https://semver.org/).
   Real-device verification is pending (documented). Built-in channels now
   register through the same registry path.
 
-## [0.1.1] — 2026-09-03
+### Changed
+
+- Align the devDependency pins to the published dsh `0.1.2-rc.1` line (26 `@deepseek-ai/dsh-*` packages), the `dshWorkshop` compatibility list, and the compat workflow's CLI/base/headless installs; the five-language README status lines move to v0.1.2. No behavior change (the seam re-check on the 0.1.3-alpha.1 checkout found no consumer-facing break; `Session.append` keeps its surface-only third parameter).
+
+## [0.1.1] - 2026-09-03
 
 ### Added
 
@@ -134,7 +137,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
   override persistence, session reset, busy digest, push authorization +
   `reach/sent` emission).
 
-## [0.1.0] — 2026-09-03
+## [0.1.0] - 2026-09-03
 
 ### Added
 
