@@ -146,12 +146,6 @@
     "@deepseek-ai/dsh-agent": {
       "optional": true
     },
-    "@deepseek-ai/dsh-llm": {
-      "optional": true
-    },
-    "@deepseek-ai/dsh-session": {
-      "optional": true
-    },
     "@deepseek-ai/dsh-user-approval": {
       "optional": true
     },
@@ -159,9 +153,6 @@
       "optional": true
     },
     "@deepseek-ai/dsh-commands": {
-      "optional": true
-    },
-    "@deepseek-ai/dsh-credentials": {
       "optional": true
     },
     "@deepseek-ai/dsh-workspace": {
@@ -192,9 +183,6 @@
       "optional": true
     },
     "@deepseek-ai/dsh-brand": {
-      "optional": true
-    },
-    "@deepseek-ai/dsh-typert-protocol": {
       "optional": true
     },
     "@deepseek-ai/dsh-api-remotes": {

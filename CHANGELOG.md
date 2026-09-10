@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Four `@deepseek-ai/*` packages were marked optional peers while `lib/index.js` imports them statically: `dsh-credentials`, `dsh-llm`, `dsh-session` and `dsh-typert-protocol`. A static top-level import is resolved at load, so a bare install (which does not install optional peers) failed with `ERR_MODULE_NOT_FOUND: Cannot find package '@deepseek-ai/dsh-credentials'`. They are now required peers, matching `dsh-draw` and `dsh-github`, which value-import `dsh-credentials` the same way. Verified by packing the tarball into an empty project: `import('dsh-reach')` now resolves (was `ERR_MODULE_NOT_FOUND`).
+
 ## [0.1.6] - 2026-09-10
 
 ### Changed
