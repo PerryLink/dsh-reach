@@ -9,6 +9,8 @@
 [![npm version](https://img.shields.io/npm/v/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 
+[English](README.md) | [简体中文](README-zh.md) | [Español](README-es.md) | [Português](README-pt.md) | **हिन्दी**
+
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH) के लिए मल्टी-चैनल निर्णय व रिमोट-कंट्रोल ब्रिज: किसी भी वर्कस्पेस के अनुमोदन/प्रश्न कार्ड को IM चैनलों (WeChat iLink, Telegram, Feishu — साथ ही QQ/DingTalk/WeCom v2 फाउंडेशन) पर भेजता है और चैट से उत्तर देना संभव बनाता है — साथ में सेशन कंसोल, प्रति-चैनल सुरक्षा और एक खुली पुश सेवा।
 
 > **स्थिति: Phase 1–3 पूर्ण (WeChat + Telegram + Feishu चैनल, v0.1.8); v2 चैनल फाउंडेशन (QQ/DingTalk/WeCom) खुले `reachChannels` रजिस्ट्री पर।**
@@ -35,7 +37,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 - किसी भी वर्कस्पेस के निर्णय कार्ड WeChat पर स्थिर क्रमांकन के साथ भेजे जाते हैं; `1`/`2`, `P1=1 P2=2` या `/rp` `/rq` से उत्तर दें।
 - Fail-closed सुरक्षा: पहला प्रेषक owner बनता है; खाली सूची सभी को अस्वीकार करती है।
-- सेशन कंसोल (`/status /silent /notify /tasks /enter /history /stop /next /help`) और सेटिंग्स टैब।
+- सेशन कंसोल (`/reach /help /status /silent /notify /tasks /enter /workspace /session /preset /model /perm /history /stop /next`) और सेटिंग्स टैब।
 
 ## Configuration
 
@@ -47,6 +49,10 @@ dsh1024 plugin --profile web add dsh-reach
 | `textChunkLimit` | `4000` | लंबे उत्तर का प्रति-संदेश खंड सीमा (अक्षर) |
 | `silent` | `false` | केवल अंतिम उत्तर, चरण-दर-चरण स्ट्रीमिंग नहीं |
 | `cwd` | `''` | नए IM सेशन के लिए डिफ़ॉल्ट कार्य निर्देशिका |
+| `authCode` | `''` | Shared secret the IM side must present before a message is accepted |
+| `digestSec` | `300` | Digest window in seconds (`0` disables the digest) |
+| `pushToken` | `''` | Token for the open push service (`reach_send` HTTP surface) |
+| `telegramToken` | `''` | Telegram bot token for the Telegram channel |
 
 ## Development
 
@@ -63,7 +69,7 @@ pnpm run check:readmes && pnpm pack
 
 ## PerryLink DSH Plugin Family
 
-यह प्रोजेक्ट [PerryLink](https://github.com/PerryLink) द्वारा अनुरक्षित [37 DeepSeek Harness प्लगइनों](https://github.com/PerryLink) में से एक है। अगर यह आपकी मदद करता है, तो बाकी भी करेंगे:
+यह प्रोजेक्ट [PerryLink](https://github.com/PerryLink) द्वारा अनुरक्षित [40 DeepSeek Harness प्लगइनों](https://github.com/PerryLink) में से एक है। अगर यह आपकी मदद करता है, तो बाकी भी करेंगे:
 
 | Plugin | One-liner |
 |---|---|
@@ -93,6 +99,7 @@ pnpm run check:readmes && pnpm pack
 | **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | ऑडिट के साथ Claude Code-शैली घोषणात्मक allow/deny/ask अनुमति नियम | |
 | **[dsh-personal-directive](https://github.com/PerryLink/dsh-personal-directive)** | शीर्ष-बार टॉगल के साथ व्यक्तिगत निर्देश इंजेक्टर (फ्रेमवर्क संस्करण) |
 | **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | माँग पर एजेंट कौशल के रूप में प्लगइन-विकास ज्ञान आधार | |
+| **[dsh-plugin-doctor](https://github.com/PerryLink/dsh-plugin-doctor)** | Zero-dependency static + sandbox smoke detector for DSH plugins | |
 | **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | सामग्री-पता साक्ष्य और सीलबंद संस्करणों वाला सत्यापन-योग्य अनुसंधान-रिपोर्ट इंजन | |
 | **[dsh-score](https://github.com/PerryLink/dsh-score)** | DeepSeek Harness प्लगिनों की बहु-आयामी गुणवत्ता स्कोरिंग। | |
 | **[dsh-session-pin](https://github.com/PerryLink/dsh-session-pin)** | टिकाऊ क्रम के साथ वेब साइडबार में सत्र पिन करें | |
@@ -102,7 +109,16 @@ pnpm run check:readmes && pnpm pack
 | **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | DeepSeek Harness प्लगिनों के लिए पृथक इंस्टॉल-एंड-स्मोक टेस्ट ड्राइव। | |
 | **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | DeepSeek Harness के लिए वेंडर पैरामीटर अनुवाद और नियतात्मक JSON मरम्मत। | |
 | **[dsh-ticktick](https://github.com/PerryLink/dsh-ticktick)** | TickTick/Dida365 कार्य ब्रिज: सत्र-हेडर पैनल + 11 टूल |
-| **[dsh-wechat](https://github.com/PerryLink/dsh-wechat)** | WeChat ↔ DSH ब्रिज (Tencent iLink bot): टेक्स्ट/इमेज/फ़ाइल/आवाज़, चैट में अनुमोदन |
+| **[dsh-wechat](https://github.com/pan17/dsh-wechat)** | WeChat ↔ DSH ब्रिज (Tencent iLink bot): टेक्स्ट/इमेज/फ़ाइल/आवाज़, चैट में अनुमोदन |
+| **[dsh-autotier](https://github.com/PerryLink/dsh-autotier)** | Automatic strong/cheap model-tier routing with deterministic risk guards and a `/tier` command | |
+| **[dsh-catalog](https://github.com/PerryLink/dsh-catalog)** | DSH Desktop Market standard catalog source for the PerryLink family | |
+| **[dsh-cert-mcp](https://github.com/PerryLink/dsh-cert-mcp)** | Read-only MCP server exposing the certification registry: grades, snapshots and five-dimension evidence | |
+| **[dsh-kit](https://github.com/PerryLink/dsh-kit)** | One-command starter pack that installs the core family | |
+| **[dsh-plugin-certification](https://github.com/PerryLink/dsh-plugin-certification)** | Community certification registry with repro-checkable grades and badges | |
+| **[dsh-plugin-kit](https://github.com/PerryLink/dsh-plugin-kit)** | Shared zero-runtime-dependency toolkit for the PerryLink DSH plugins | |
+| **[dsh-plugin-portal](https://github.com/PerryLink/dsh-plugin-portal)** | Zero-dependency static portal rendering the whole plugin family as one page | |
+| **[dsh-plugin-upgrade-015](https://github.com/PerryLink/dsh-plugin-upgrade-015)** | Merged `0.1.3-alpha.1` → `0.1.5-rc.1` upgrade corridor card plus a zero-dependency seam scanner | |
+| **[dsh-team-rooms](https://github.com/PerryLink/dsh-team-rooms)** | Cross-session team rooms: shared message bus, task board and timeline | |
 
 
 ## License

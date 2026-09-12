@@ -9,6 +9,8 @@
 [![npm version](https://img.shields.io/npm/v/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 
+[English](README.md) | [简体中文](README-zh.md) | [Español](README-es.md) | **Português** | [हिन्दी](README-hi.md)
+
 Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envia os cartões de aprovação/pergunta de qualquer espaço de trabalho para canais IM (WeChat iLink, Telegram, Feishu — além das bases v2 de QQ/DingTalk/WeCom) e permite respondê-los pelo chat, com console de sessão, segurança por canal e um serviço aberto de notificações.
 
 > **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.8); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
@@ -36,7 +38,7 @@ Reinicie o DSH após a instalação (os patches do bundle são aplicados na inic
 
 - Cartões de decisão de qualquer espaço de trabalho espelhados no WeChat com numeração estável; responda com `1`/`2`, `P1=1 P2=2` ou `/rp` `/rq`.
 - Segurança fail-closed: o primeiro remetente é o owner; listas vazias negam todos.
-- Console de sessão (`/status /silent /notify /tasks /enter /history /stop /next /help`) e aba de configurações.
+- Console de sessão (`/reach /help /status /silent /notify /tasks /enter /workspace /session /preset /model /perm /history /stop /next`) e aba de configurações.
 
 ## Configuration
 
@@ -48,6 +50,10 @@ Reinicie o DSH após a instalação (os patches do bundle são aplicados na inic
 | `textChunkLimit` | `4000` | Limite de caracteres por trecho de resposta longa |
 | `silent` | `false` | Apenas respostas finais, sem streaming por etapa |
 | `cwd` | `''` | Diretório de trabalho padrão para novas sessões IM |
+| `authCode` | `''` | Shared secret the IM side must present before a message is accepted |
+| `digestSec` | `300` | Digest window in seconds (`0` disables the digest) |
+| `pushToken` | `''` | Token for the open push service (`reach_send` HTTP surface) |
+| `telegramToken` | `''` | Telegram bot token for the Telegram channel |
 
 ## Development
 
@@ -64,7 +70,7 @@ Todos os plugins PerryLink podem ser explorados no mercado integrado do DSH Desk
 
 ## PerryLink DSH Plugin Family
 
-Este projeto é um dos [37 plugins de DeepSeek Harness](https://github.com/PerryLink) mantidos por [PerryLink](https://github.com/PerryLink). Se este ajuda você, os outros provavelmente também:
+Este projeto é um dos [40 plugins de DeepSeek Harness](https://github.com/PerryLink) mantidos por [PerryLink](https://github.com/PerryLink). Se este ajuda você, os outros provavelmente também:
 
 | Plugin | One-liner |
 |---|---|
@@ -94,6 +100,7 @@ Este projeto é um dos [37 plugins de DeepSeek Harness](https://github.com/Perry
 | **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | Regras de permissão declarativas allow/deny/ask estilo Claude Code com auditoria | |
 | **[dsh-personal-directive](https://github.com/PerryLink/dsh-personal-directive)** | Injetor de diretivas pessoais com alternância na barra superior (edição framework) |
 | **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | Base de conhecimento de desenvolvimento de plugins como habilidade de agente sob demanda | |
+| **[dsh-plugin-doctor](https://github.com/PerryLink/dsh-plugin-doctor)** | Zero-dependency static + sandbox smoke detector for DSH plugins | |
 | **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | Motor de relatórios de pesquisa verificáveis com evidência endereçada por conteúdo | |
 | **[dsh-score](https://github.com/PerryLink/dsh-score)** | Pontuação de qualidade multidimensional para plugins de DeepSeek Harness. | |
 | **[dsh-session-pin](https://github.com/PerryLink/dsh-session-pin)** | Fixe sessões na barra lateral web com ordenação durável | |
@@ -103,7 +110,16 @@ Este projeto é um dos [37 plugins de DeepSeek Harness](https://github.com/Perry
 | **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | Test drives isolados de instalação e smoke para plugins de DeepSeek Harness. | |
 | **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | Tradução de parâmetros entre fornecedores e reparo determinístico de JSON para DeepSeek Harness. | |
 | **[dsh-ticktick](https://github.com/PerryLink/dsh-ticktick)** | Ponte de tarefas TickTick/Dida365: painel no cabeçalho da sessão + 11 ferramentas |
-| **[dsh-wechat](https://github.com/PerryLink/dsh-wechat)** | Ponte WeChat ↔ DSH (bot Tencent iLink): texto/imagem/arquivo/voz, aprovações no chat |
+| **[dsh-wechat](https://github.com/pan17/dsh-wechat)** | Ponte WeChat ↔ DSH (bot Tencent iLink): texto/imagem/arquivo/voz, aprovações no chat |
+| **[dsh-autotier](https://github.com/PerryLink/dsh-autotier)** | Automatic strong/cheap model-tier routing with deterministic risk guards and a `/tier` command | |
+| **[dsh-catalog](https://github.com/PerryLink/dsh-catalog)** | DSH Desktop Market standard catalog source for the PerryLink family | |
+| **[dsh-cert-mcp](https://github.com/PerryLink/dsh-cert-mcp)** | Read-only MCP server exposing the certification registry: grades, snapshots and five-dimension evidence | |
+| **[dsh-kit](https://github.com/PerryLink/dsh-kit)** | One-command starter pack that installs the core family | |
+| **[dsh-plugin-certification](https://github.com/PerryLink/dsh-plugin-certification)** | Community certification registry with repro-checkable grades and badges | |
+| **[dsh-plugin-kit](https://github.com/PerryLink/dsh-plugin-kit)** | Shared zero-runtime-dependency toolkit for the PerryLink DSH plugins | |
+| **[dsh-plugin-portal](https://github.com/PerryLink/dsh-plugin-portal)** | Zero-dependency static portal rendering the whole plugin family as one page | |
+| **[dsh-plugin-upgrade-015](https://github.com/PerryLink/dsh-plugin-upgrade-015)** | Merged `0.1.3-alpha.1` → `0.1.5-rc.1` upgrade corridor card plus a zero-dependency seam scanner | |
+| **[dsh-team-rooms](https://github.com/PerryLink/dsh-team-rooms)** | Cross-session team rooms: shared message bus, task board and timeline | |
 
 
 ## License

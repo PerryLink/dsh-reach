@@ -9,6 +9,8 @@
 [![npm version](https://img.shields.io/npm/v/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 
+**English** | [简体中文](README-zh.md) | [Español](README-es.md) | [Português](README-pt.md) | [हिन्दी](README-hi.md)
+
 Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): pushes any workspace's approval/question cards to IM channels (WeChat iLink, Telegram, Feishu — plus QQ/DingTalk/WeCom v2 drop-in foundations) and answers them from chat, with a session console, per-channel security, and an open push service.
 
 > **Status: Phase 1–3 complete (WeChat + Telegram + Feishu channels, v0.1.8); v2 channel foundations (QQ/DingTalk/WeCom) on the open `reachChannels` registry.**
@@ -71,6 +73,10 @@ the load loudly):
 | `queueMode` | `queue` | Busy delivery: `queue` or `steer` |
 | `maxQueue` / `sendBudget` / `windowSec` | `50` / `10` / `60` | Queue cap, per-window send budget, window seconds |
 | `denyUnauthorized` | `false` | Silently ignore (true) or notice (false) unknown senders |
+| `authCode` | `''` | Shared secret the IM side must present before a message is accepted |
+| `digestSec` | `300` | Digest window in seconds (`0` disables the digest) |
+| `pushToken` | `''` | Token for the open push service (`reach_send` HTTP surface) |
+| `telegramToken` | `''` | Telegram bot token for the Telegram channel |
 
 ## Development
 
@@ -87,7 +93,7 @@ All PerryLink plugins are browsable in the built-in DSH Desktop Market: **Market
 
 ## PerryLink DSH Plugin Family
 
-This project is one of the [37 DeepSeek Harness plugins](https://github.com/PerryLink) maintained by [PerryLink](https://github.com/PerryLink). If this one helps you, the others likely will too:
+This project is one of the [40 DeepSeek Harness plugins](https://github.com/PerryLink) maintained by [PerryLink](https://github.com/PerryLink). If this one helps you, the others likely will too:
 
 | Plugin | One-liner |
 |---|---|
@@ -117,6 +123,7 @@ This project is one of the [37 DeepSeek Harness plugins](https://github.com/Perr
 | **[dsh-permission-rules](https://github.com/PerryLink/dsh-permission-rules)** | Claude Code-style declarative allow/deny/ask permission rules with audit | |
 | **[dsh-personal-directive](https://github.com/PerryLink/dsh-personal-directive)** | Personal directive injector with top-bar toggle (framework edition) |
 | **[dsh-plugin-guide](https://github.com/PerryLink/dsh-plugin-guide)** | Plugin-development knowledge base as an on-demand agent skill | |
+| **[dsh-plugin-doctor](https://github.com/PerryLink/dsh-plugin-doctor)** | Zero-dependency static + sandbox smoke detector for DSH plugins | |
 | **[dsh-research-report](https://github.com/PerryLink/dsh-research-report)** | Verifiable research-report engine: content-addressed evidence ledger and sealed versions | |
 | **[dsh-score](https://github.com/PerryLink/dsh-score)** | Multi-dimensional quality scoring for DeepSeek Harness plugins. | |
 | **[dsh-session-pin](https://github.com/PerryLink/dsh-session-pin)** | Pin sessions in the Web sidebar with durable ordering | |
@@ -126,7 +133,16 @@ This project is one of the [37 DeepSeek Harness plugins](https://github.com/Perr
 | **[dsh-test-drive](https://github.com/PerryLink/dsh-test-drive)** | Isolated install-and-smoke test drives for DeepSeek Harness plugins. | |
 | **[dsh-translate](https://github.com/PerryLink/dsh-translate)** | Vendor parameter translation and deterministic JSON repair for DeepSeek Harness. | |
 | **[dsh-ticktick](https://github.com/PerryLink/dsh-ticktick)** | TickTick/Dida365 task bridge: session-header panel + 11 tools |
-| **[dsh-wechat](https://github.com/PerryLink/dsh-wechat)** | WeChat ↔ DSH bridge (Tencent iLink bot): text/image/file/voice, approvals in chat |
+| **[dsh-wechat](https://github.com/pan17/dsh-wechat)** | WeChat ↔ DSH bridge (Tencent iLink bot): text/image/file/voice, approvals in chat |
+| **[dsh-autotier](https://github.com/PerryLink/dsh-autotier)** | Automatic strong/cheap model-tier routing with deterministic risk guards and a `/tier` command | |
+| **[dsh-catalog](https://github.com/PerryLink/dsh-catalog)** | DSH Desktop Market standard catalog source for the PerryLink family | |
+| **[dsh-cert-mcp](https://github.com/PerryLink/dsh-cert-mcp)** | Read-only MCP server exposing the certification registry: grades, snapshots and five-dimension evidence | |
+| **[dsh-kit](https://github.com/PerryLink/dsh-kit)** | One-command starter pack that installs the core family | |
+| **[dsh-plugin-certification](https://github.com/PerryLink/dsh-plugin-certification)** | Community certification registry with repro-checkable grades and badges | |
+| **[dsh-plugin-kit](https://github.com/PerryLink/dsh-plugin-kit)** | Shared zero-runtime-dependency toolkit for the PerryLink DSH plugins | |
+| **[dsh-plugin-portal](https://github.com/PerryLink/dsh-plugin-portal)** | Zero-dependency static portal rendering the whole plugin family as one page | |
+| **[dsh-plugin-upgrade-015](https://github.com/PerryLink/dsh-plugin-upgrade-015)** | Merged `0.1.3-alpha.1` → `0.1.5-rc.1` upgrade corridor card plus a zero-dependency seam scanner | |
+| **[dsh-team-rooms](https://github.com/PerryLink/dsh-team-rooms)** | Cross-session team rooms: shared message bus, task board and timeline | |
 
 ### Install from the DSH Desktop Market
 
