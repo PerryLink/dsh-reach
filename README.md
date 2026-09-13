@@ -48,6 +48,13 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 ## Install
 
 ```bash
+# npm channel (published releases)
+dsh plugin --profile web add dsh-reach
+
+# git channel (latest main)
+dsh plugin --profile web add "github:PerryLink/dsh-reach#main"
+
+# alternates
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
 dsh1024 plugin --profile web add dsh-reach
 ```
