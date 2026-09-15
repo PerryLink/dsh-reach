@@ -8,6 +8,17 @@
 import { z } from 'zod'
 import type { InvocationDescriptor } from '@deepseek-ai/dsh-typert-protocol'
 
+/**
+ * Strict wire codec carrying BOTH published and checkout faces: the
+ * `schema` field feeds the npm-published 0.1.5-rc.2 line, `create` feeds the
+ * checkout 0.1.6-alpha.1+ line (schemas materialize lazily on first use).
+ * Built through a variable, so neither typecheck ruler flags the other
+ * face's field as excess.
+ */
+function strictWire<T>(typeSymbol: string, schema: T) {
+  return Object.freeze({ ...{ mode: 'strict' as const, typeSymbol, schema }, create: () => schema })
+}
+
 export const reachChannelStatusSchema = z.object({
   id: z.string(),
   phase: z.enum(['unconfigured', 'logged-out', 'waiting-scan', 'scanned', 'logged-in', 'failed']),
@@ -59,11 +70,7 @@ export const REACH_STATUS_DESCRIPTOR = Object.freeze({
   method: 'status',
   invocation: Object.freeze({ kind: 'direct' }),
   parameters: Object.freeze([]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-reach/types#ReachStatus',
-    schema: reachStatusSchema,
-  }),
+  result: strictWire('dsh-reach/types#ReachStatus', reachStatusSchema),
   sourceLocation: SOURCE,
 } as const) satisfies InvocationDescriptor
 
@@ -78,17 +85,9 @@ export const REACH_CONFIG_DESCRIPTOR = Object.freeze({
     name: 'input',
     wire: 'input',
     source: 'json',
-    codec: Object.freeze({
-      mode: 'strict',
-      typeSymbol: 'dsh-reach/types#ReachConfigInput',
-      schema: reachConfigSchema,
-    }),
+    codec: strictWire('dsh-reach/types#ReachConfigInput', reachConfigSchema),
   } satisfies InvocationDescriptor['parameters'][number])]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-reach/types#ReachConfigResult',
-    schema: reachConfigResultSchema,
-  }),
+  result: strictWire('dsh-reach/types#ReachConfigResult', reachConfigResultSchema),
   sourceLocation: SOURCE,
 } as const) satisfies InvocationDescriptor
 
@@ -100,11 +99,7 @@ export const REACH_RELOGIN_DESCRIPTOR = Object.freeze({
   method: 'relogin',
   invocation: Object.freeze({ kind: 'direct' }),
   parameters: Object.freeze([]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-reach/types#ReachConfigResult',
-    schema: reachConfigResultSchema,
-  }),
+  result: strictWire('dsh-reach/types#ReachConfigResult', reachConfigResultSchema),
   sourceLocation: SOURCE,
 } as const) satisfies InvocationDescriptor
 
@@ -116,11 +111,7 @@ export const REACH_LOGOUT_DESCRIPTOR = Object.freeze({
   method: 'logout',
   invocation: Object.freeze({ kind: 'direct' }),
   parameters: Object.freeze([]),
-  result: Object.freeze({
-    mode: 'strict',
-    typeSymbol: 'dsh-reach/types#ReachConfigResult',
-    schema: reachConfigResultSchema,
-  }),
+  result: strictWire('dsh-reach/types#ReachConfigResult', reachConfigResultSchema),
   sourceLocation: SOURCE,
 } as const) satisfies InvocationDescriptor
 
