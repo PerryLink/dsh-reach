@@ -31,9 +31,13 @@ jobs:
         run: |
           pnpm run typecheck:ci
           pnpm test
+          pnpm run lint
           pnpm run build
           pnpm run verify:self-contained
           pnpm run verify:artifacts
+          pnpm run check:readmes
+          pnpm run check:contract-drift
+          pnpm run check:credential-leak
 
       - name: Verify the changelog names this version
         run: |
