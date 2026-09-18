@@ -10,6 +10,14 @@ project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Carry both Typert strict-codec faces on the wire descriptors: the published `schema` field (0.1.5-rc.2 line) and the `create` factory the 0.1.6-alpha.1 checkout materializes lazily on first use. Both typecheck rulers stay green.
+- Widen the 26 `@deepseek-ai/dsh-*` peer ranges with the 0.1.6 tuple clause (`|| >=0.1.6-0 <0.2.0`), so a host on the `0.1.6-alpha.*` line no longer reports an unsatisfied peer. The dev/test pins stay on the published `0.1.5-rc.2` line on purpose: that is the face the `typecheck:ci` ruler measures, while the plain `typecheck` ruler measures the checkout through the `tsconfig.json` `paths`. The five READMEs now quote the three-clause range.
+- Declare `dsh.manifestVersion: 1` and `engines.dsh` (the same three-clause range as the peers), so the ecosystem index and the future enforcement face see a manifest contract instead of a bundle-only block.
+
+### Fixed
+
+- A refused write to the `reach-runtime` settings namespace was discarded (`void runtimeScope.replace(...)`), so silent mode, session mappings and audit entries could stop persisting with no signal at all. The rejection is now reported on the plugin logger (`dsh-reach: runtime settings write failed: …`).
+- The `reach` and `reach-runtime` namespaces were registered before the channel adapters were constructed. A constructor throw therefore stranded two registered namespaces on a fiber whose mount never completed. Both registrations now happen after the last adapter is built, which a regression test pins with an injected constructor failure (plus a control case proving the normal path still registers both).
+- Reading the runtime namespace crashed (`Cannot read properties of undefined (reading 'length')`) when a scope reported "no section yet": the `?? {}` fallback handed `toState` an object without the array fields. The fallback is now a well-formed empty namespace value.
 
 ## [0.1.8] - 2026-09-12
 
