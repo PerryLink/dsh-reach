@@ -132,6 +132,24 @@ interface RuntimeNamespaceValue {
   readonly queueMode: 'queue' | 'steer' | undefined
 }
 
+/**
+ * Shape `toState` expects when the namespace holds nothing yet. The host
+ * resolves the schema defaults, but a scope that reports "no section" must not
+ * crash the bridge: reading `.length` off an empty object used to throw inside
+ * `persist` (A7, found while covering the write-failure path).
+ */
+const EMPTY_NAMESPACE: RuntimeNamespaceValue = {
+  security: undefined,
+  chatSessions: [],
+  workspaceCwd: [],
+  delivered: [],
+  audit: [],
+  silent: undefined,
+  crossSessionNotify: undefined,
+  notifyTaskEvents: undefined,
+  queueMode: undefined,
+}
+
 const toState = (value: RuntimeNamespaceValue): ReachRuntimeState => ({
   security: value.security ? { owner: value.security.owner, allowFrom: value.security.allowFrom ?? [] } : undefined,
   chatSessions: value.chatSessions.length > 0
@@ -228,18 +246,9 @@ export function apply(ctx: Context, config: Config): void {
     notifyTaskEvents: resolved.notifyTaskEvents,
     queueMode: undefined,
   }
-  const configScope = settings?.register('reach', Config, { applies: 'live' })
-  const runtimeScope = settings?.register<`reach-runtime`, RuntimeNamespaceValue>(
-    'reach-runtime',
-    RuntimeStateSchema as unknown as Schema<RuntimeNamespaceValue>,
-  )
-  const readState = (): ReachRuntimeState =>
-    runtimeScope ? toState(runtimeScope.get() ?? {} as RuntimeNamespaceValue) : memoryState
-  const writeState = (next: ReachRuntimeState): void => {
-    if (runtimeScope) void runtimeScope.replace(toNamespace(next))
-    else memoryState = next
-  }
-
+  // Adapter construction comes first: a throw inside a constructor must not
+  // leave half-registered settings namespaces behind (A7-②). The namespaces
+  // are registered right after the last adapter, still inside `apply`.
   const sessionKey = credentialKey('dsh-reach', 'weixin-session')
   const adapter = new WeixinAdapter({
     baseUrl: resolved.baseUrl,
@@ -289,6 +298,28 @@ export function apply(ctx: Context, config: Config): void {
     transport: wecomWebhookTransport(() => ({ webhookUrl: wecom.webhook() }), log),
     log,
   })
+
+  // Settings namespaces (A7-②): registered only after every adapter above has
+  // been constructed, so a constructor throw cannot strand a half-registered
+  // namespace. Both scopes ride this fiber and unload with the plugin.
+  const configScope = settings?.register('reach', Config, { applies: 'live' })
+  const runtimeScope = settings?.register<`reach-runtime`, RuntimeNamespaceValue>(
+    'reach-runtime',
+    RuntimeStateSchema as unknown as Schema<RuntimeNamespaceValue>,
+  )
+  const readState = (): ReachRuntimeState =>
+    runtimeScope ? toState(runtimeScope.get() ?? EMPTY_NAMESPACE) : memoryState
+  const writeState = (next: ReachRuntimeState): void => {
+    if (runtimeScope) {
+      // A7-①: the write result used to be discarded, so a refused write failed
+      // silently and the next read served stale state. Report it instead.
+      void runtimeScope.replace(toNamespace(next)).catch((error: unknown) => {
+        log(`runtime settings write failed: ${String(error)}`)
+      })
+    } else {
+      memoryState = next
+    }
+  }
 
   // Open channel registry: every channel (built-in + third-party) gets the
   // same routing, outbound, and monitor treatment through one extension point.
