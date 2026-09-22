@@ -10,6 +10,7 @@
 [![Version](https://img.shields.io/github/v/tag/PerryLink/dsh-reach?label=version)](https://github.com/PerryLink/dsh-reach/releases)
 [![npm version](https://img.shields.io/npm/v/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
+[![dshfind](https://dshfind.com/api/badge/PerryLink/dsh-reach?metric=downloads)](https://dshfind.com/plugins/PerryLink/dsh-reach?ref=badge)
 
 **English** | [简体中文](README-zh.md) | [Español](README-es.md) | [Português](README-pt.md) | [हिन्दी](README-hi.md)
 
