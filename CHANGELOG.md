@@ -5,6 +5,19 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
 
+## [0.1.11] - 2026-09-23
+
+### Fixed
+
+- The two inbound-message injections no longer fail to type-check on the `0.1.7` line: the host removed the shared `{ kind: 'plugin', plugin }` message-source catch-all from BOTH layers that used to accept it — the type layer (`MessageSourceMap`) and the persistence layer, which refuses a physical row whose source kind is `'plugin'`, so a cast cannot smuggle one past admission. The bridge now declares this producer's **own** message-source kind in `src/bridge.ts` through a `declare module '@deepseek-ai/dsh-llm'` augmentation — the same producer-owned pattern the host's own producers use — and uses it at both write sites, the busy-path `agent.inject` and the idle-path `agent.followup`. Both stay durable `user/message` rows, so model-visible ⟺ logged is unchanged.
+
+### Changed
+
+- Move the `@deepseek-ai/dsh-*` dev/test pins to `0.1.7-alpha.2` and re-verify both rulers against that line: `typecheck` resolves the local harness checkout through `tsconfig.json` `paths`, `typecheck:ci` the published `0.1.7-alpha.2` faces.
+- Every declared host range — `engines.dsh` and the 26 `peerDependencies` bands — gains the `|| >=0.1.7-0 <0.2.0` arm, so the bands now admit the `0.1.7` prerelease line. Under semver's prerelease rule a range whose only prerelease comparators sit on earlier version tuples cannot admit a later alpha, so the previous three-clause form excluded the very host this release targets. No existing arm was removed or narrowed.
+- `dshWorkshop.compatibility.dshVersions` gains `0.1.7-alpha.2`, and all five READMEs name the verified line.
+- The compat workflow now installs the `0.1.7-alpha.2` host instead of `0.1.6-alpha.2`, so the scheduled end-to-end run exercises the line this package declares.
+
 ## [0.1.10] - 2026-09-19
 
 ### Added
