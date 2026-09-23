@@ -97,7 +97,7 @@ const dispose = reach.registerChannel({
 | Commands | `ctx.commands.register` (own) + `ctx.commands.execute` (native passthrough, logs `command/run`/`command/done`) |
 | Config | plugin row (Schemastery) + `ctx.settings.register('reach', schema)` namespace (secret slots redacted on wire) |
 | Credentials | `ctx.credentials` branded keys `credentialKey('dsh-reach', <id>)` |
-| Inbound messages | `agent.followup(createUserMessage({source:{kind:'plugin',plugin:'dsh-reach'}}))` (idle) / `agent.inject` (busy) |
+| Inbound messages | `agent.followup(createUserMessage({source:{kind:'dsh-reach'}}))` (idle) / `agent.inject` (busy) |
 | Outbound events | `session/event` (`turn/end`, `assistant/message`, ...), `agent/error` |
 | Tools | `defineTool` (`reach_send` etc.) |
 | Channel prompt | `ctx.systemPrompt.context({name, order, text})` |

@@ -28,7 +28,7 @@ Standalone DeepSeek Harness plugin repository (`dsh-reach`). Development follows
 ## Hard rules applied here
 
 - **Waterfall discipline.** The decision-answerer listeners hold the waterfall promise only while a card is pending; timeout/delegate paths always resolve through `next()` (delegate), `'rejected'` (fail-closed), or the request's own `signal` (`'cancelled'`). Never swallow a request without a documented outcome.
-- **Model-visible ⟺ logged.** IM inbound goes through `agent.followup`/`agent.inject` with `source: {kind:'plugin', plugin:'dsh-reach'}` (durable `user/message`); decision replies ride the native `approval/decided` audit pair. No custom downstream session-event types.
+- **Model-visible ⟺ logged.** IM inbound goes through `agent.followup`/`agent.inject` with `source: {kind:'dsh-reach'}` (durable `user/message`; the producer-owned kind is declared by module augmentation in `src/bridge.ts` — the host's `MessageSourceMap` has no catch-all `plugin` kind, and the persistence layer rejects a `kind:'plugin'` row outright); decision replies ride the native `approval/decided` audit pair. No custom downstream session-event types.
 - **Security defaults fail closed.** Sender allowlists empty = deny all; first QR scan = owner; strangers are logged, never answered (optional `notifyRejected`). Tokens live in `ctx.credentials` (`credentialKey('dsh-reach', ...)`) and never cross the browser line; settings schemas declare secret slots.
 - **Fail loud.** `resolveConfig` re-validates bounds; invalid row config fails the profile load.
 - **Effect-owning lifecycles.** Every registration (namespace, command, tool, listeners, timers, pollers, routes) rides the plugin fiber; teardown order lives in single disposers where order matters.

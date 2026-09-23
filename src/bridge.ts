@@ -13,6 +13,31 @@ import type { Context } from '@deepseek-ai/cordis'
 import crypto from 'node:crypto'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import type { ContextFormed } from '@deepseek-ai/dsh-llm'
+
+/**
+ * Producer-owned message attribution for the messages this bridge injects into
+ * a session.
+ *
+ * The harness's `MessageSourceMap` is a merge-extensible sum type: each
+ * producer declares its own `kind` in its own module, and the retired
+ * catch-all `{ kind: 'plugin', plugin }` shape no longer exists. It is gone
+ * from BOTH layers that used to accept it — the type layer
+ * (`packages/llm/llm/src/message.ts`) and the persistence layer
+ * (`session-format-v3-to-v4/src/message-sources.ts`), which refuses a physical
+ * row whose source `kind` is `'plugin'`, so a cast cannot smuggle one past
+ * admission. The host's own producers do exactly this (`tool-jobs` declares
+ * `{ kind: 'tool-jobs' } & ContextFormed`).
+ *
+ * Nothing in this package folds messages by source, so the retired spelling
+ * only has to stay LOADABLE, which the host's own V3-to-V4 migration supplies.
+ */
+declare module '@deepseek-ai/dsh-llm' {
+  interface MessageSourceMap {
+    /** Messages this bridge injects on behalf of an inbound chat message. */
+    'dsh-reach': { kind: 'dsh-reach' } & ContextFormed
+  }
+}
 import type { ApprovalOutcome, ApprovalRequest } from '@deepseek-ai/dsh-user-approval'
 import type { AskUserQuestionAnswer, AskUserQuestionRequest } from '@deepseek-ai/dsh-user-questions'
 import type { SessionEvent } from '@deepseek-ai/dsh-session'
@@ -656,7 +681,7 @@ export class Bridge {
     const content = [text, ...attachmentLines].filter(Boolean).join('\n')
     const userMessage = createUserMessage({
       content: [{ type: 'text', text: content }],
-      source: { kind: 'plugin', plugin: 'dsh-reach' },
+      source: { kind: 'dsh-reach' },
     })
     if (this.runningAgents.has(agent)) {
       const mode = this.state().queueMode ?? this.deps.config.queueMode
@@ -892,7 +917,7 @@ export class Bridge {
     if (agent) {
       agent.followup(createUserMessage({
         content: [{ type: 'text', text: next }],
-        source: { kind: 'plugin', plugin: 'dsh-reach' },
+        source: { kind: 'dsh-reach' },
       }))
     }
   }
