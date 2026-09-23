@@ -32,7 +32,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 | सतह | स्थिति |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.1** (GitHub tag)। peer रेंज `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; dev/test pins जान-बूझकर प्रकाशित `0.1.7-alpha.2` लाइन पर हैं — यही वह face है जिसे `typecheck:ci` रूलर मापता है (`typecheck` रूलर `tsconfig.json` के `paths` से checkout मापता है)। 2026-09-18 को पूर्ण gate chain के साथ सत्यापित; bare-import + scratch-profile + keyless smoke हर PR पर Compat workflow में चलता है। |
+| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.2** (GitHub tag)। peer रेंज `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; dev/test pins जान-बूझकर प्रकाशित `0.1.7-alpha.2` लाइन पर हैं — यही वह face है जिसे `typecheck:ci` रूलर मापता है (`typecheck` रूलर `tsconfig.json` के `paths` से checkout मापता है)। 2026-09-18 को पूर्ण gate chain के साथ सत्यापित; bare-import + scratch-profile + keyless smoke हर PR पर Compat workflow में चलता है। |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
