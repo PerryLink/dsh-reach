@@ -23,7 +23,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.1**（GitHub tag）。peer 区间 `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0`；dev/test 钉号**刻意留在已发布的 `0.1.5-rc.2` 线**——那正是 `typecheck:ci` 尺子所量的面（`typecheck` 尺子则经 `tsconfig.json` 的 `paths` 量 checkout 面）。已于 2026-09-18 跑完整门禁链核验；裸装 + scratch profile + keyless 冒烟由 Compat 工作流在每个 PR 上执行。 |
+| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.1**（GitHub tag）。peer 区间 `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`；dev/test 钉号**刻意留在已发布的 `0.1.7-alpha.2` 线**——那正是 `typecheck:ci` 尺子所量的面（`typecheck` 尺子则经 `tsconfig.json` 的 `paths` 量 checkout 面）。已于 2026-09-18 跑完整门禁链核验；裸装 + scratch profile + keyless 冒烟由 Compat 工作流在每个 PR 上执行。 |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
