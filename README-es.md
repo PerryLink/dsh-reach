@@ -20,6 +20,13 @@ Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https:/
 > contratos oficiales y la hoja de ruta están en
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
 
+
+<!-- star-cta -->
+## ⭐ 如果它帮到了你
+
+Este plugin forma parte de la [familia de plugins DSH](https://github.com/PerryLink) (más de 40, todos Apache-2.0). Si te resulta útil, **dale una estrella**: no desbloquea nada, pero ayuda a que la siguiente persona lo encuentre antes.
+
+*English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 ## Install
 
 ```bash

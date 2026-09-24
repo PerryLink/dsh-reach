@@ -19,6 +19,13 @@
 > डिज़ाइन योजना, प्रतिस्पर्धी शोध, आधिकारिक कॉन्ट्रैक्ट सत्यापन और चरणबद्ध रोडमैप
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md) में हैं।
 
+
+<!-- star-cta -->
+## ⭐ 如果它帮到了你
+
+यह प्लगइन [DSH प्लगइन परिवार](https://github.com/PerryLink) का हिस्सा है (40+ प्लगइन, सभी Apache-2.0)। अगर यह उपयोगी लगे, तो **एक स्टार दें** — इससे कोई सुविधा अनलॉक नहीं होती, पर अगला व्यक्ति इसे खोज में आसानी से पा लेता है।
+
+*English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 ## Install
 
 ```bash
