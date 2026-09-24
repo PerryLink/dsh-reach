@@ -15,7 +15,7 @@
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink、Telegram、飞书——另含 QQ/钉钉/企微 v2 drop-in 基座），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
-> **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.11）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
+> **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.12）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
 > 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
 
@@ -23,7 +23,7 @@
 
 | 方面 | 状态 |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.2**（GitHub tag）。peer 区间 `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`；dev/test 钉号**刻意留在已发布的 `0.1.7-alpha.2` 线**——那正是 `typecheck:ci` 尺子所量的面（`typecheck` 尺子则经 `tsconfig.json` 的 `paths` 量 checkout 面）。已于 2026-09-18 跑完整门禁链核验；裸装 + scratch profile + keyless 冒烟由 Compat 工作流在每个 PR 上执行。 |
+| Harness | DeepSeek Harness **dsh-v0.1.7-rc.1**（GitHub tag）。peer 区间 `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`；dev/test 钉号**刻意留在已发布的 `0.1.7-rc.1` 线**——那正是 `typecheck:ci` 尺子所量的面（`typecheck` 尺子则经 `tsconfig.json` 的 `paths` 量 checkout 面）。已于 2026-09-24 跑完整门禁链核验；裸装 + scratch profile + keyless 冒烟由 Compat 工作流在每个 PR 上执行。 |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)

@@ -15,7 +15,7 @@
 
 Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envia os cartões de aprovação/pergunta de qualquer espaço de trabalho para canais IM (WeChat iLink, Telegram, Feishu — além das bases v2 de QQ/DingTalk/WeCom) e permite respondê-los pelo chat, com console de sessão, segurança por canal e um serviço aberto de notificações.
 
-> **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.11); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
+> **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.12); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
 > O plano de design, a pesquisa de concorrentes, a verificação dos contratos
 > oficiais e o roteiro por fases estão em
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
@@ -33,7 +33,7 @@ Reinicie o DSH após a instalação (os patches do bundle são aplicados na inic
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.2** (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-alpha.2`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-09-18 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
+| Harness | DeepSeek Harness **dsh-v0.1.7-rc.1** (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-rc.1`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-09-24 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)

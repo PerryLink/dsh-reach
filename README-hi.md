@@ -15,7 +15,7 @@
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH) के लिए मल्टी-चैनल निर्णय व रिमोट-कंट्रोल ब्रिज: किसी भी वर्कस्पेस के अनुमोदन/प्रश्न कार्ड को IM चैनलों (WeChat iLink, Telegram, Feishu — साथ ही QQ/DingTalk/WeCom v2 फाउंडेशन) पर भेजता है और चैट से उत्तर देना संभव बनाता है — साथ में सेशन कंसोल, प्रति-चैनल सुरक्षा और एक खुली पुश सेवा।
 
-> **स्थिति: Phase 1–3 पूर्ण (WeChat + Telegram + Feishu चैनल, v0.1.11); v2 चैनल फाउंडेशन (QQ/DingTalk/WeCom) खुले `reachChannels` रजिस्ट्री पर।**
+> **स्थिति: Phase 1–3 पूर्ण (WeChat + Telegram + Feishu चैनल, v0.1.12); v2 चैनल फाउंडेशन (QQ/DingTalk/WeCom) खुले `reachChannels` रजिस्ट्री पर।**
 > डिज़ाइन योजना, प्रतिस्पर्धी शोध, आधिकारिक कॉन्ट्रैक्ट सत्यापन और चरणबद्ध रोडमैप
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md) में हैं।
 
@@ -32,7 +32,7 @@ dsh1024 plugin --profile web add dsh-reach
 
 | सतह | स्थिति |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-alpha.2** (GitHub tag)। peer रेंज `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; dev/test pins जान-बूझकर प्रकाशित `0.1.7-alpha.2` लाइन पर हैं — यही वह face है जिसे `typecheck:ci` रूलर मापता है (`typecheck` रूलर `tsconfig.json` के `paths` से checkout मापता है)। 2026-09-18 को पूर्ण gate chain के साथ सत्यापित; bare-import + scratch-profile + keyless smoke हर PR पर Compat workflow में चलता है। |
+| Harness | DeepSeek Harness **dsh-v0.1.7-rc.1** (GitHub tag)। peer रेंज `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; dev/test pins जान-बूझकर प्रकाशित `0.1.7-rc.1` लाइन पर हैं — यही वह face है जिसे `typecheck:ci` रूलर मापता है (`typecheck` रूलर `tsconfig.json` के `paths` से checkout मापता है)। 2026-09-24 को पूर्ण gate chain के साथ सत्यापित; bare-import + scratch-profile + keyless smoke हर PR पर Compat workflow में चलता है। |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
