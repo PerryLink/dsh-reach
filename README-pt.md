@@ -40,7 +40,7 @@ Reinicie o DSH após a instalação (os patches do bundle são aplicados na inic
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-rc.1** (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-rc.1`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-09-24 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
+| Harness | DeepSeek Harness **dsh-v0.1.7-rc.2** (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-rc.2`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-09-24 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)

@@ -34,7 +34,7 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 
 | Surface | Status |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.1.7-rc.1** (GitHub tag). Peer range `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; the dev/test pins deliberately stay on the published `0.1.7-rc.1` line, which is the face the `typecheck:ci` ruler measures (the plain `typecheck` ruler measures the checkout through `tsconfig.json` `paths`). Verified 2026-09-24 with the full gate chain; the bare-import + scratch-profile + keyless smoke run in the Compat workflow on every PR. |
+| Harness | DeepSeek Harness **dsh-v0.1.7-rc.2** (GitHub tag). Peer range `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0`; the dev/test pins deliberately stay on the published `0.1.7-rc.2` line, which is the face the `typecheck:ci` ruler measures (the plain `typecheck` ruler measures the checkout through `tsconfig.json` `paths`). Verified 2026-09-24 with the full gate chain; the bare-import + scratch-profile + keyless smoke run in the Compat workflow on every PR. |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
