@@ -3,8 +3,11 @@
  * DeepSeek Harness.
  *
  * Loose-coupling design: the plugin declares NO hard service dependencies
- * (`inject` is empty). Every feature gates on `ctx.get(...)` and degrades:
- * - no `settings` → runtime state becomes session-scoped (in-memory);
+ * (`inject` is empty). Every feature gates on `ctx.get(...)` / `ctx.inject`
+ * and degrades:
+ * - no `settings` service → the generated settings form is not suppressed
+ *   (the plugin's own `settings.plugins.tab` page needs no host service);
+ * - runtime state is session-scoped either way (see `apply`);
  * - no `tools` → the `reach_send` tool is skipped;
  * - no `credentials` → channel tokens come from the row config only;
  * - no `commands` / `webServer` / `systemPrompt` → those surfaces are skipped.
@@ -20,7 +23,6 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import Schema from '@deepseek-ai/schemastery'
 import { credentialKey, type CredentialProvider } from '@deepseek-ai/dsh-credentials'
 import type { InboundMessage } from './channel.ts'
 import type {} from '@deepseek-ai/dsh-credentials'
@@ -51,7 +53,6 @@ import {
 } from './adapters/wecom/wecom.ts'
 import { ChannelRegistry, type ChannelRegistration, type ReachChannelsFace } from './registry.ts'
 import { Bridge, type ReachRuntimeState } from './bridge.ts'
-import type { AuditEntry } from './security.ts'
 import { localCommands } from './commands.ts'
 import { reachSendTool } from './tool.ts'
 import { registerChannelPrompt } from './prompt.ts'
@@ -90,94 +91,6 @@ export {
 } from './decision.ts'
 export { chunkText, type ChannelAdapter, type InboundMessage, type MessagePart } from './channel.ts'
 
-// Service Definition — RuntimeStateSchema: the `reach-runtime` settings
-// namespace contract shared by the settings face and the bridge.
-/** Runtime-state schema (settings namespace `reach-runtime`). */
-export const RuntimeStateSchema = Schema.object({
-  security: Schema.object({
-    owner: Schema.string(),
-    allowFrom: Schema.array(Schema.string()),
-  }),
-  chatSessions: Schema.array(Schema.object({
-    chat: Schema.string(),
-    session: Schema.string(),
-  })),
-  workspaceCwd: Schema.array(Schema.object({
-    chat: Schema.string(),
-    cwd: Schema.string(),
-  })),
-  delivered: Schema.array(Schema.string()),
-  audit: Schema.array(Schema.object({
-    at: Schema.string(),
-    kind: Schema.union(['inbound', 'command', 'decision', 'auth', 'ignored'] as const),
-    sender: Schema.string(),
-    detail: Schema.string(),
-  })),
-  silent: Schema.boolean(),
-  crossSessionNotify: Schema.boolean(),
-  notifyTaskEvents: Schema.boolean(),
-  queueMode: Schema.union(['queue', 'steer'] as const),
-}) as Schema<RuntimeNamespaceValue>
-
-/** Persisted shape of the runtime namespace (mapped to/from ReachRuntimeState). */
-interface RuntimeNamespaceValue {
-  readonly security: { readonly owner: string | undefined; readonly allowFrom: string[] } | undefined
-  readonly chatSessions: readonly { readonly chat: string; readonly session: string }[]
-  readonly workspaceCwd: readonly { readonly chat: string; readonly cwd: string }[]
-  readonly delivered: readonly string[]
-  readonly audit: readonly AuditEntry[]
-  readonly silent: boolean | undefined
-  readonly crossSessionNotify: boolean | undefined
-  readonly notifyTaskEvents: boolean | undefined
-  readonly queueMode: 'queue' | 'steer' | undefined
-}
-
-/**
- * Shape `toState` expects when the namespace holds nothing yet. The host
- * resolves the schema defaults, but a scope that reports "no section" must not
- * crash the bridge: reading `.length` off an empty object used to throw inside
- * `persist` (A7, found while covering the write-failure path).
- */
-const EMPTY_NAMESPACE: RuntimeNamespaceValue = {
-  security: undefined,
-  chatSessions: [],
-  workspaceCwd: [],
-  delivered: [],
-  audit: [],
-  silent: undefined,
-  crossSessionNotify: undefined,
-  notifyTaskEvents: undefined,
-  queueMode: undefined,
-}
-
-const toState = (value: RuntimeNamespaceValue): ReachRuntimeState => ({
-  security: value.security ? { owner: value.security.owner, allowFrom: value.security.allowFrom ?? [] } : undefined,
-  chatSessions: value.chatSessions.length > 0
-    ? Object.fromEntries(value.chatSessions.map((entry) => [entry.chat, entry.session]))
-    : undefined,
-  workspaceCwd: value.workspaceCwd.length > 0
-    ? Object.fromEntries(value.workspaceCwd.map((entry) => [entry.chat, entry.cwd]))
-    : undefined,
-  delivered: value.delivered,
-  audit: value.audit,
-  silent: value.silent,
-  crossSessionNotify: value.crossSessionNotify,
-  notifyTaskEvents: value.notifyTaskEvents,
-  queueMode: value.queueMode,
-})
-
-const toNamespace = (state: ReachRuntimeState): RuntimeNamespaceValue => ({
-  security: state.security ? { owner: state.security.owner, allowFrom: [...state.security.allowFrom] } : undefined,
-  chatSessions: state.chatSessions ? Object.entries(state.chatSessions).map(([chat, session]) => ({ chat, session })) : [],
-  workspaceCwd: state.workspaceCwd ? Object.entries(state.workspaceCwd).map(([chat, cwd]) => ({ chat, cwd })) : [],
-  delivered: state.delivered ?? [],
-  audit: state.audit ?? [],
-  silent: state.silent,
-  crossSessionNotify: state.crossSessionNotify,
-  notifyTaskEvents: state.notifyTaskEvents,
-  queueMode: state.queueMode,
-})
-
 /** No-op credentials provider for compositions without the credentials seam. */
 const nullCredentials = {
   resolve: async () => undefined,
@@ -191,14 +104,17 @@ const nullCredentials = {
   deleteRecord: async () => {},
 } as unknown as CredentialProvider
 
-/** Structural face of the settings scope we consume (register + owner scope). */
+/**
+ * Structural face of the settings service we consume. The host's service is
+ * `SettingsForms`, whose public surface is `configure` / `describe` /
+ * `prepareDocument` / `update` / `replace` / `mutate` — `register` belonged to
+ * the replaced `SettingsProvider` seam and no longer exists, so anything that
+ * still calls it fails the whole mount with `settings?.register is not a
+ * function`. Only `configure` is read here, and only through this shape, so a
+ * service without it degrades instead of throwing.
+ */
 interface SettingsFace {
-  register<Namespace extends string, T>(ns: Namespace, schema: unknown, options?: unknown): {
-    get(): T | undefined
-    watch(callback: (next: T, prev: T) => void | Promise<void>): () => void
-    update(patch: object): Promise<void>
-    replace(section: object): Promise<void>
-  }
+  configure(presentation: { auto?: boolean }, owner?: unknown): () => void
 }
 
 /** Structural face of the tool registry. */
@@ -230,11 +146,16 @@ export function apply(ctx: Context, config: Config): void {
 
   // Consumer — consume the optional host services through `ctx.get` and
   // degrade each feature surface when its seam is absent.
-  const settings = ctx.get('settings') as SettingsFace | undefined
   const tools = ctx.get('tools') as ToolsFace | undefined
   const credentials = ctx.get('credentials') as CredentialProvider | undefined
 
-  // Runtime state: settings-backed when the seam exists, else session-scoped.
+  // Runtime state is session-scoped: the durable form it used to ride (a
+  // `settings.register` namespace) no longer exists on the host line this
+  // package targets, and `reach-runtime` was plugin-private bookkeeping rather
+  // than user-editable configuration, so it has no honest landing point on the
+  // Config form. State therefore resets with the process; what has to outlive a
+  // restart already lives elsewhere — channel tokens in `ctx.credentials`, and
+  // the user-facing toggles below in the row config.
   let memoryState: ReachRuntimeState = {
     security: undefined,
     chatSessions: undefined,
@@ -246,9 +167,13 @@ export function apply(ctx: Context, config: Config): void {
     notifyTaskEvents: resolved.notifyTaskEvents,
     queueMode: undefined,
   }
+  const readState = (): ReachRuntimeState => memoryState
+  const writeState = (next: ReachRuntimeState): void => {
+    memoryState = next
+  }
   // Adapter construction comes first: a throw inside a constructor must not
-  // leave half-registered settings namespaces behind (A7-②). The namespaces
-  // are registered right after the last adapter, still inside `apply`.
+  // leave half-built registrations behind (A7-②), and the settings-page policy
+  // above is claimed through an effect only once this body has run.
   const sessionKey = credentialKey('dsh-reach', 'weixin-session')
   const adapter = new WeixinAdapter({
     baseUrl: resolved.baseUrl,
@@ -299,27 +224,21 @@ export function apply(ctx: Context, config: Config): void {
     log,
   })
 
-  // Settings namespaces (A7-②): registered only after every adapter above has
-  // been constructed, so a constructor throw cannot strand a half-registered
-  // namespace. Both scopes ride this fiber and unload with the plugin.
-  const configScope = settings?.register('reach', Config, { applies: 'live' })
-  const runtimeScope = settings?.register<`reach-runtime`, RuntimeNamespaceValue>(
-    'reach-runtime',
-    RuntimeStateSchema as unknown as Schema<RuntimeNamespaceValue>,
-  )
-  const readState = (): ReachRuntimeState =>
-    runtimeScope ? toState(runtimeScope.get() ?? EMPTY_NAMESPACE) : memoryState
-  const writeState = (next: ReachRuntimeState): void => {
-    if (runtimeScope) {
-      // A7-①: the write result used to be discarded, so a refused write failed
-      // silently and the next read served stale state. Report it instead.
-      void runtimeScope.replace(toNamespace(next)).catch((error: unknown) => {
-        log(`runtime settings write failed: ${String(error)}`)
-      })
-    } else {
-      memoryState = next
-    }
-  }
+  // Settings surface. `settings.register(ns, schema, options)` — which used to
+  // mount the `reach` and `reach-runtime` namespaces here — was deleted from
+  // the host's settings service; under the replacement contract a plugin's
+  // editable surface is its own `Config`, addressed by the profile entry id
+  // and projected field by field through `.volatile()`. This plugin keeps its
+  // settings page (the `reach` Remote service + `settings.plugins.tab`), so the
+  // only thing left to claim is the presentation policy that suppresses the
+  // host's auto-generated duplicate form. Reached through the optional seam
+  // (still no hard dependency), and shape-guarded rather than assumed, because
+  // a composition may mount no settings service at all.
+  ctx.inject(['settings'], (scope) => {
+    const settings = scope.get('settings') as SettingsFace | undefined
+    if (typeof settings?.configure !== 'function') return
+    scope.effect(() => settings.configure({ auto: false }, ctx.fiber), 'dsh-reach: settings presentation')
+  })
 
   // Open channel registry: every channel (built-in + third-party) gets the
   // same routing, outbound, and monitor treatment through one extension point.
@@ -441,8 +360,4 @@ export function apply(ctx: Context, config: Config): void {
   if (ctx.get('systemPrompt') !== undefined) {
     registerChannelPrompt(ctx, (agent) => bridge.isImSession(agent.session.id))
   }
-
-  // Keep the config scope referenced: the namespace resolves row defaults
-  // and the settings page writes land here.
-  void configScope
 }

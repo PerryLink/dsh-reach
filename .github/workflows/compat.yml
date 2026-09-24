@@ -119,6 +119,20 @@ jobs:
           timeout 120 dsh --profile compat "Reply with exactly: ok" > smoke.log 2>&1
           code="$?"
           set -e
+          # A dead row still lets this smoke look green: the harness keeps booting
+          # and the llm-deepseek row answers MISSING_CREDENTIAL either way, which
+          # is how `settings?.register is not a function` shipped unnoticed. Any
+          # activation warning is therefore a failure in its own right.
+          if grep -q 'did not activate' smoke.log; then
+            echo 'FAIL: an entry did not activate'
+            cat smoke.log
+            exit 1
+          fi
+          if grep -q 'TypeError' smoke.log; then
+            echo 'FAIL: the composition raised a TypeError'
+            cat smoke.log
+            exit 1
+          fi
           if grep -q 'MISSING_CREDENTIAL' smoke.log; then
             echo 'PASS: plugin tree loaded (keyless)'
           elif [ "$code" -eq 0 ] && grep -qiE '(^|[^a-z])ok([^a-z]|$)' smoke.log; then
