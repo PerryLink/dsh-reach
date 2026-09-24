@@ -5,8 +5,7 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/).
 
 
-## [Unreleased]
-
+## [0.1.12] - 2026-09-24
 ### Fixed
 
 - **The plugin row could not activate on any `0.1.7` host: `apply()` threw `TypeError: settings?.register is not a function` and the whole entry was reported as `1 entry did not activate`, so no channel, tool, command, route, or settings page ever mounted.** The line targeted here composes `@deepseek-ai/dsh-settings` as `SettingsForms`, whose public surface is `configure`/`describe`/`prepareDocument`/`update`/`replace`/`mutate`; `register(ns, schema, options)` belonged to the replaced `SettingsProvider` seam and exists on no published `0.1.7` line. This was not introduced by `0.1.7-rc.1` — `packages/settings/settings` is unchanged across the `alpha.2`..`rc.1` window, so the break arrived with the `0.1.7-alpha` settings inversion and this repo had never adapted to it. `apply` now claims its page policy through `ctx.inject(['settings'], …)` with a `typeof … === 'function'` shape guard, so a composition that mounts no settings service, or a service of an unknown generation, degrades instead of failing the mount.
