@@ -15,7 +15,7 @@
 
 Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envía las tarjetas de aprobación/pregunta de cualquier espacio de trabajo a canales IM (WeChat iLink, Telegram, Feishu — más las bases v2 de QQ/DingTalk/WeCom) y permite responderlas desde el chat, con consola de sesión, seguridad por canal y un servicio abierto de notificaciones.
 
-> **Estado: Fases 1–3 completas (canales WeChat + Telegram + Feishu, v0.1.14); bases de canales v2 (QQ/DingTalk/WeCom) sobre el registro abierto `reachChannels`.**
+> **Estado: Fases 1–3 completas (canales WeChat + Telegram + Feishu, v0.1.15); bases de canales v2 (QQ/DingTalk/WeCom) sobre el registro abierto `reachChannels`.**
 > El plan de diseño, la investigación de la competencia, la verificación de
 > contratos oficiales y la hoja de ruta están en
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
@@ -76,6 +76,23 @@ pnpm run check:readmes && pnpm pack
 ### Instalar desde el mercado de DSH Desktop
 
 Todos los plugins de PerryLink pueden explorarse en el mercado integrado de DSH Desktop: **Market → Sources → add source → pegar** `https://perrylink-dsh-catalog.perrylink.workers.dev/catalog-source.json` **→ seleccionarlo**. La instalación sigue pasando por la verificación de identidad npm del mercado y tu confirmación.
+
+## Interoperability with other DSH plugins
+
+Verificado contra **DSH `0.2.0-rc.2`** (el runtime para el que se publica este README) y el conjunto de plugins con más estrellas sondeado el 2026-10-05.
+
+Este plugin **no interfiere** con otros plugins, incluidos los de más estrellas:
+
+- **Sin colisión de nombres de herramienta.** Todas las herramientas llevan espacio de nombres; ninguna ocupa un nombre desnudo ya perteneciente a una herramienta incluida u otro plugin.
+- **Sin colisión de clave de servicio.** Solo provee `reach`, `reachChannels`, `reachPush`; esa clave no es una costura incluida ni la provee ningún plugin de más estrellas.
+- **Sin colisión de slot.** No registra ninguna clave de slot de cliente, así que no disputa un asiento `shadows-shipped-ui`.
+- **Sin colisión de ruta HTTP.** No registra ningún prefijo `webServer`.
+- **Sin colisión en la capa de patch.** El patch del bundle solo hace `insert` de su propia fila; nunca sobrescribe el `config` de una fila incluida.
+- **Sin mutación global.** No parchea prototipos, ni reescribe `process.env`, ni reemplaza el dispatcher global de fetch.
+
+**Los listeners de eventos compartidos no interfieren por construcción.** Observa los eventos sensibles al orden `approval/request`, `user-questions/request` con `ctx.on()` — el registro de difusión de Cordis, donde cada listener se ejecuta y ninguno puede dejar sin turno a otro. **Todos los listeners aquí delegan por `next()`**, así que la cadena nunca se cortocircuita:
+
+Evidencia estática: `dsh-plugin-doctor` K10–K13 dan `pass` en todas las comprobaciones de este repositorio.
 
 ## PerryLink DSH Plugin Family
 
