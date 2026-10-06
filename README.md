@@ -22,6 +22,8 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
 > Release (GitHub repo + npm publish) follows in a dedicated session.
 
+**📖 Ecosystem knowledge base** — measured data, not marketing: [plugin development guide · plugin-selection data · maintenance criteria](https://perrylink.github.io/dsh-plugin-guide/).
+
 <!-- star-cta -->
 ## ⭐ 如果它帮到了你
 

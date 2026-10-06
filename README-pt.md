@@ -21,6 +21,8 @@ Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https:
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
 
 
+**📖 Base de conhecimento do ecossistema** — dados medidos, não marketing: [guia de desenvolvimento · dados de seleção · critérios de manutenção](https://perrylink.github.io/dsh-plugin-guide/).
+
 <!-- star-cta -->
 ## Status de manutenção: 🧊 CONGELADO
 
