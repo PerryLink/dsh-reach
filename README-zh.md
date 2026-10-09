@@ -23,6 +23,12 @@
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
 <!-- star-cta -->
+## What is dsh-reach?
+
+完整证据（含宿主版本兼容矩阵）见 `dsh-plugin-supersession-review-20261005.md`；英文版见 [README.md](README.md) 的 **Maintenance status: 🧊 FROZEN** 一节。
+
+![dsh-reach 终端演示：dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+
 ## 维护状态：🧊 已冻结
 
 > **2026-10-05 起冻结，不再新增功能。** 本包仍可正常使用，**没有退役**——但不再投入功能开发，只有真实故障才会修复。
@@ -64,6 +70,10 @@
 - **开放通道注册表**：第三方插件通过 `ctx.get('reachChannels').registerChannel({ id, adapter, priority, ownsChatId, startMonitor })` 挂载通道；路由、出站与监视器生命周期全部由桥接层托管（QQ/钉钉/企微走同一路径）。
 
 ## Install
+
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
 
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach

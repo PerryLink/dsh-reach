@@ -24,6 +24,12 @@ Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https:/
 **📖 Base de conocimiento del ecosistema** — datos medidos, no marketing: [guía de desarrollo · datos de selección · criterios de mantenimiento](https://perrylink.github.io/dsh-plugin-guide/).
 
 <!-- star-cta -->
+## What is dsh-reach?
+
+Evidencia completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo en la sección **Maintenance status: 🧊 FROZEN** de [README.md](README.md).
+
+![Demostración de terminal de dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+
 ## Estado de mantenimiento: 🧊 CONGELADO
 
 > **Congelado el 2026-10-05. Sin nuevas funciones.** Este paquete sigue funcionando y **no está retirado**, pero ya no recibe trabajo de funciones; solo se corregirá una avería real.
@@ -61,6 +67,10 @@ Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
+
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
 
 - Tarjetas de decisión de cualquier espacio de trabajo enviadas a WeChat con numeración estable; respuesta con `1`/`2`, `P1=1 P2=2` o `/rp` `/rq`.
 - Seguridad fail-closed: el primer remitente es el propietario; listas vacías niegan a todos.

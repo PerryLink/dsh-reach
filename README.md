@@ -33,6 +33,12 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 
 
+## What is dsh-reach?
+
+Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.
+
+![Terminal demo of dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+
 ## Maintenance status: 🧊 FROZEN
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
@@ -82,12 +88,16 @@ Maintainers treat this capability as one where **better-adopted alternatives now
 
 ## Install
 
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
+
 ```bash
 # npm channel (published releases)
 dsh plugin --profile web add dsh-reach
 
 # git channel (latest main)
-dsh plugin --profile web add "github:PerryLink/dsh-reach#main"
+dsh plugin --profile web add github:PerryLink/dsh-reach
 
 # alternates
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach

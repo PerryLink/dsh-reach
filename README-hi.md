@@ -23,6 +23,12 @@
 **📖 इकोसिस्टम नॉलेज बेस** — मापे गए आँकड़े, मार्केटिंग नहीं: [डेवलपमेंट गाइड · चयन डेटा · रखरखाव मानदंड](https://perrylink.github.io/dsh-plugin-guide/)।
 
 <!-- star-cta -->
+## What is dsh-reach?
+
+पूर्ण प्रमाण: `dsh-plugin-supersession-review-20261005.md`। पूरा पाठ [README.md](README.md) के **Maintenance status: 🧊 FROZEN** अनुभाग में।
+
+![dsh-reach का टर्मिनल डेमो: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+
 ## रखरखाव स्थिति: 🧊 फ़्रीज़
 
 > **2026-10-05 से फ़्रीज़। कोई नई सुविधा नहीं।** यह पैकेज अभी भी काम करता है और **सेवानिवृत्त नहीं है**, पर अब इसमें नई सुविधाओं का काम नहीं होगा; केवल वास्तविक खराबी ठीक की जाएगी।
@@ -60,6 +66,10 @@ dsh1024 plugin --profile web add dsh-reach
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)
+
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
 
 - किसी भी वर्कस्पेस के निर्णय कार्ड WeChat पर स्थिर क्रमांकन के साथ भेजे जाते हैं; `1`/`2`, `P1=1 P2=2` या `/rp` `/rq` से उत्तर दें।
 - Fail-closed सुरक्षा: पहला प्रेषक owner बनता है; खाली सूची सभी को अस्वीकार करती है।
