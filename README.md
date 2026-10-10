@@ -17,7 +17,7 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 [![npm downloads](https://img.shields.io/npm/dm/dsh-reach)](https://www.npmjs.com/package/dsh-reach)
 [![dshfind](https://dshfind.com/api/badge/PerryLink/dsh-reach?metric=downloads)](https://dshfind.com/plugins/PerryLink/dsh-reach?ref=badge)
 
-> **Status: Phase 1–3 complete (WeChat + Telegram + Feishu channels, v0.1.17); v2 channel foundations (QQ/DingTalk/WeCom) on the open `reachChannels` registry.**
+> **Status: Phase 1–3 complete (WeChat + Telegram + Feishu channels, v0.1.18); v2 channel foundations (QQ/DingTalk/WeCom) on the open `reachChannels` registry.**
 > The design plan, competitor research, official contract verification, and
 > phased roadmap live in
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
