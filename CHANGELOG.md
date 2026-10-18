@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.21] - 2026-10-18
+
+### Fixed
+
+- 0.1.20 could not be published from the release workflow; this patch is the same dependency change, published directly from a clean tree. Version stamps synced in all five READMEs.
+
 ## [0.1.20] - 2026-10-18
 
 ### Changed
