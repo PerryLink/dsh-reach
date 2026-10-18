@@ -254,6 +254,8 @@ pnpm run check:readmes && pnpm pack
 
 </details>
 
-</details>## License
+</details>
+
+## License
 
 Apache-2.0。第三方声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

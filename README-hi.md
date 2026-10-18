@@ -241,6 +241,8 @@ pnpm run check:readmes && pnpm pack
 
 </details>
 
-</details>## License
+</details>
+
+## License
 
 Apache-2.0। तृतीय-पक्ष सूचनाएँ [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) में।
