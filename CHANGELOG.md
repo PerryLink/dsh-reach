@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.22] - 2026-10-18
+
+### Fixed
+
+- Republish the dependency-only change after npm staged 0.1.21; no code change.
+
 ## [0.1.21] - 2026-10-18
 
 ### Fixed
