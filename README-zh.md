@@ -13,6 +13,11 @@
 
 [English](README.md) | **简体中文** | [Español](README-es.md) | [Português](README-pt.md) | [हिन्दी](README-hi.md)
 
+```sh
+dsh plugin --profile <name> add dsh-reach
+```
+
+
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink、Telegram、飞书——另含 QQ/钉钉/企微 v2 drop-in 基座），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
 > **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.19）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
@@ -23,6 +28,19 @@
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
 <!-- star-cta -->
+
+## Install
+
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add dsh-reach
+dsh1024 plugin --profile web add dsh-reach
+```
+
+安装后需重启 DSH（bundle 补丁在启动时生效）。
 
 ## What is dsh-reach?
 
@@ -73,19 +91,6 @@
 - **主动推送**：`reach_send` 工具（出站文件围栏）、限流预算 + FIFO 补发、静默模式、后台完成通知。
 - **设置页**：设置 → 插件 → IM 桥接（状态、开关、重新扫码/退出登录）。
 - **开放通道注册表**：第三方插件通过 `ctx.get('reachChannels').registerChannel({ id, adapter, priority, ownsChatId, startMonitor })` 挂载通道；路由、出站与监视器生命周期全部由桥接层托管（QQ/钉钉/企微走同一路径）。
-
-## Install
-
-```sh
-dsh plugin --profile web add github:PerryLink/dsh-reach
-```
-
-```bash
-npx @deepseek-ai/dsh plugin --profile web add dsh-reach
-dsh1024 plugin --profile web add dsh-reach
-```
-
-安装后需重启 DSH（bundle 补丁在启动时生效）。
 
 ## Configuration
 

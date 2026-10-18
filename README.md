@@ -1,5 +1,10 @@
 # dsh-reach
 
+```sh
+dsh plugin --profile <name> add dsh-reach
+```
+
+
 **English** | [简体中文](README-zh.md) | [Español](README-es.md) | [Português](README-pt.md) | [हिन्दी](README-hi.md)
 
 Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): pushes any workspace's approval/question cards to IM channels (WeChat iLink, Telegram, Feishu — plus QQ/DingTalk/WeCom v2 drop-in foundations) and answers them from chat, with a session console, per-channel security, and an open push service.
@@ -26,6 +31,26 @@ Multi-channel decision & remote-control bridge for [DeepSeek Harness](https://gi
 **📖 Ecosystem knowledge base** — measured data, not marketing: [plugin development guide · plugin-selection data · maintenance criteria](https://perrylink.github.io/dsh-plugin-guide/).
 
 <!-- star-cta -->
+## Install
+
+```sh
+dsh plugin --profile web add github:PerryLink/dsh-reach
+```
+
+```bash
+# npm channel (published releases)
+dsh plugin --profile web add dsh-reach
+
+# git channel (latest main)
+dsh plugin --profile web add github:PerryLink/dsh-reach
+
+# alternates
+npx @deepseek-ai/dsh plugin --profile web add dsh-reach
+dsh1024 plugin --profile web add dsh-reach
+```
+
+Restart DSH after installation (bundle patches apply at startup).
+
 ## ⭐ 如果它帮到了你
 
 这个插件是 [DSH 插件家族](https://github.com/PerryLink)的一员（40+ 个，全部 Apache-2.0）。如果你在用，**给个 star** —— 它不会解锁任何功能，但会让下一个人在搜索里更容易找到它。
@@ -89,26 +114,6 @@ Maintainers treat this capability as one where **better-adopted alternatives now
   `ctx.get('reachChannels').registerChannel({ id, adapter, priority,
   ownsChatId, startMonitor })`; routing, outbound, and monitor lifecycle are
   all bridge-owned (QQ/DingTalk/WeCom ride this same path).
-
-## Install
-
-```sh
-dsh plugin --profile web add github:PerryLink/dsh-reach
-```
-
-```bash
-# npm channel (published releases)
-dsh plugin --profile web add dsh-reach
-
-# git channel (latest main)
-dsh plugin --profile web add github:PerryLink/dsh-reach
-
-# alternates
-npx @deepseek-ai/dsh plugin --profile web add dsh-reach
-dsh1024 plugin --profile web add dsh-reach
-```
-
-Restart DSH after installation (bundle patches apply at startup).
 
 ## Configuration
 

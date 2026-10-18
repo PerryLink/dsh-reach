@@ -13,6 +13,11 @@
 
 [English](README.md) | [简体中文](README-zh.md) | **Español** | [Português](README-pt.md) | [हिन्दी](README-hi.md)
 
+```sh
+dsh plugin --profile <name> add dsh-reach
+```
+
+
 Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envía las tarjetas de aprobación/pregunta de cualquier espacio de trabajo a canales IM (WeChat iLink, Telegram, Feishu — más las bases v2 de QQ/DingTalk/WeCom) y permite responderlas desde el chat, con consola de sesión, seguridad por canal y un servicio abierto de notificaciones.
 
 > **Estado: Fases 1–3 completas (canales WeChat + Telegram + Feishu, v0.1.19); bases de canales v2 (QQ/DingTalk/WeCom) sobre el registro abierto `reachChannels`.**
@@ -24,6 +29,15 @@ Puente multicanal de decisiones y control remoto para [DeepSeek Harness](https:/
 **📖 Base de conocimiento del ecosistema** — datos medidos, no marketing: [guía de desarrollo · datos de selección · criterios de mantenimiento](https://perrylink.github.io/dsh-plugin-guide/).
 
 <!-- star-cta -->
+
+## Install
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add dsh-reach
+dsh1024 plugin --profile web add dsh-reach
+```
+
+Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar).
 
 ## What is dsh-reach?
 
@@ -55,15 +69,6 @@ Los mantenedores consideran que en esta capacidad **ya existen alternativas con 
 Este plugin forma parte de la [familia de plugins DSH](https://github.com/PerryLink) (más de 40, todos Apache-2.0). Si te resulta útil, **dale una estrella**: no desbloquea nada, pero ayuda a que la siguiente persona lo encuentre antes.
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
-## Install
-
-```bash
-npx @deepseek-ai/dsh plugin --profile web add dsh-reach
-dsh1024 plugin --profile web add dsh-reach
-```
-
-Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar).
-
 ## Compatibilidad
 
 | Superficie | Estado |

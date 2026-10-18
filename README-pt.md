@@ -13,6 +13,11 @@
 
 [English](README.md) | [简体中文](README-zh.md) | [Español](README-es.md) | **Português** | [हिन्दी](README-hi.md)
 
+```sh
+dsh plugin --profile <name> add dsh-reach
+```
+
+
 Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envia os cartões de aprovação/pergunta de qualquer espaço de trabalho para canais IM (WeChat iLink, Telegram, Feishu — além das bases v2 de QQ/DingTalk/WeCom) e permite respondê-los pelo chat, com console de sessão, segurança por canal e um serviço aberto de notificações.
 
 > **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.19); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
@@ -24,6 +29,15 @@ Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https:
 **📖 Base de conhecimento do ecossistema** — dados medidos, não marketing: [guia de desenvolvimento · dados de seleção · critérios de manutenção](https://perrylink.github.io/dsh-plugin-guide/).
 
 <!-- star-cta -->
+
+## Install
+
+```bash
+npx @deepseek-ai/dsh plugin --profile web add dsh-reach
+dsh1024 plugin --profile web add dsh-reach
+```
+
+Reinicie o DSH após a instalação (os patches do bundle são aplicados na inicialização).
 
 ## What is dsh-reach?
 
@@ -55,15 +69,6 @@ Os mantenedores consideram que nesta capacidade **já existem alternativas com m
 Este plugin faz parte da [família de plugins DSH](https://github.com/PerryLink) (mais de 40, todos Apache-2.0). Se for útil, **deixe uma estrela**: não desbloqueia nada, mas ajuda a próxima pessoa a encontrá-lo.
 
 *English:* part of a 40+ plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
-## Install
-
-```bash
-npx @deepseek-ai/dsh plugin --profile web add dsh-reach
-dsh1024 plugin --profile web add dsh-reach
-```
-
-Reinicie o DSH após a instalação (os patches do bundle são aplicados na inicialização).
-
 ## Compatibilidade
 
 | Superfície | Status |
