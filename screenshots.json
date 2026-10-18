@@ -1,5 +1,14 @@
-{
-  "screenshots": [
-    "docs/assets/dsh-reach-demo.png"
-  ]
-}
+[
+  {
+    "path": "docs/assets/dsh-reach-hero.png",
+    "kind": "hero",
+    "alt": "dsh-reach terminal output",
+    "caption": "Real dsh-reach test run; 105 tests passed."
+  },
+  {
+    "path": "docs/assets/dsh-reach-demo.gif",
+    "kind": "demo",
+    "alt": "Animated dsh-reach terminal session",
+    "caption": "The same run, assembled line by line."
+  }
+]

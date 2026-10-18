@@ -15,7 +15,7 @@
 
 Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envia os cartões de aprovação/pergunta de qualquer espaço de trabalho para canais IM (WeChat iLink, Telegram, Feishu — além das bases v2 de QQ/DingTalk/WeCom) e permite respondê-los pelo chat, com console de sessão, segurança por canal e um serviço aberto de notificações.
 
-> **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.18); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
+> **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.19); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
 > O plano de design, a pesquisa de concorrentes, a verificação dos contratos
 > oficiais e o roteiro por fases estão em
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
@@ -29,7 +29,7 @@ Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https:
 
 Evidência completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo na seção **Maintenance status: 🧊 FROZEN** de [README.md](README.md).
 
-![Demonstração de terminal do dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+![Demonstração de terminal do dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-hero.png)
 
 ![Animated terminal demo of dsh-reach](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.gif)
 

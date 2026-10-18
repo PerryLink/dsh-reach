@@ -15,7 +15,7 @@
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink、Telegram、飞书——另含 QQ/钉钉/企微 v2 drop-in 基座），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
-> **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.18）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
+> **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.19）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
 > 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
 
@@ -28,7 +28,7 @@
 
 完整证据（含宿主版本兼容矩阵）见 `dsh-plugin-supersession-review-20261005.md`；英文版见 [README.md](README.md) 的 **Maintenance status: 🧊 FROZEN** 一节。
 
-![dsh-reach 终端演示：dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.png)
+![dsh-reach 终端演示：dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-hero.png)
 
 ![Animated terminal demo of dsh-reach](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.gif)
 
