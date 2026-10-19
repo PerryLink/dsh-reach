@@ -94,7 +94,19 @@ dsh plugin --profile web add github:PerryLink/dsh-reach
 
 #### विस्तृत उदाहरण
 
-- `/rp`
+**कमांड**
+
+~~~sh
+/rp
+~~~
+
+**आउटपुट**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*स्रोत `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
 #### संक्षिप्त उदाहरण
 

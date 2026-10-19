@@ -93,7 +93,19 @@ Son los puntos de entrada reales; instala y llama a uno.
 
 #### Ejemplo detallado
 
-- `/rp`
+**Comando**
+
+~~~sh
+/rp
+~~~
+
+**Salida**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*Observado en `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
 #### Ejemplos breves
 

@@ -121,7 +121,19 @@ These are the plugin's real entry points; install once, then call one.
 
 #### Detailed example
 
-- `/rp`
+**Command**
+
+~~~sh
+/rp
+~~~
+
+**Output**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*Observed from `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
 #### Brief examples
 

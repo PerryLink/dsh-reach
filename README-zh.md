@@ -99,7 +99,19 @@ dsh1024 plugin --profile web add dsh-reach
 
 #### 详细示例
 
-- `/rp`
+**命令**
+
+~~~sh
+/rp
+~~~
+
+**输出**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*来源 `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
 #### 简短示例
 
