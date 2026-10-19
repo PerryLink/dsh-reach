@@ -43,9 +43,10 @@ Reinicia DSH tras la instalación (los parches del bundle se aplican al arrancar
 
 Evidencia completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo en la sección **Maintenance status: 🧊 FROZEN** de [README.md](README.md).
 
-![Demostración de terminal de dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-hero.png)
+![Diagrama de flujo de dsh-reach: instalar → abrir panel → actuar.](docs/assets/dsh-reach-flow.svg)
 
-![Animated terminal demo of dsh-reach](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.gif)
+*Resumen del flujo: instalar → abrir panel → actuar. Los ejemplos siguientes usan la superficie de comandos real.*
+
 
 *La misma ejecución, animada.*
 
@@ -85,6 +86,18 @@ dsh plugin --profile web add github:PerryLink/dsh-reach
 - Tarjetas de decisión de cualquier espacio de trabajo enviadas a WeChat con numeración estable; respuesta con `1`/`2`, `P1=1 P2=2` o `/rp` `/rq`.
 - Seguridad fail-closed: el primer remitente es el propietario; listas vacías niegan a todos.
 - Consola de sesión (`/reach /help /status /silent /notify /tasks /enter /workspace /session /preset /model /perm /history /stop /next`) y pestaña de ajustes.
+
+### Ejemplos
+
+Son los puntos de entrada reales; instala y llama a uno.
+
+#### Ejemplo detallado
+
+- `/rp`
+
+#### Ejemplos breves
+
+- `/rq`
 
 ## Configuration
 

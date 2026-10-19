@@ -62,11 +62,11 @@ Restart DSH after installation (bundle patches apply at startup).
 
 Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.
 
-![Terminal demo of dsh-reach: dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-hero.png)
+![Workflow diagram for dsh-reach: install → open panel → act.](docs/assets/dsh-reach-flow.svg)
 
-![Animated terminal demo of dsh-reach](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.gif)
+*Workflow overview: install → open panel → act. The examples below use the real command surface.*
 
-*The same run, animated.*
+
 
 ## Maintenance status: 🧊 FROZEN
 
@@ -114,6 +114,18 @@ Maintainers treat this capability as one where **better-adopted alternatives now
   `ctx.get('reachChannels').registerChannel({ id, adapter, priority,
   ownsChatId, startMonitor })`; routing, outbound, and monitor lifecycle are
   all bridge-owned (QQ/DingTalk/WeCom ride this same path).
+
+### Examples
+
+These are the plugin's real entry points; install once, then call one.
+
+#### Detailed example
+
+- `/rp`
+
+#### Brief examples
+
+- `/rq`
 
 ## Configuration
 

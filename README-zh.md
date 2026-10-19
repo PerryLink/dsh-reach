@@ -46,9 +46,10 @@ dsh1024 plugin --profile web add dsh-reach
 
 完整证据（含宿主版本兼容矩阵）见 `dsh-plugin-supersession-review-20261005.md`；英文版见 [README.md](README.md) 的 **Maintenance status: 🧊 FROZEN** 一节。
 
-![dsh-reach 终端演示：dsh-reach — install, then answer a decision card from chat](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-hero.png)
+![dsh-reach 工作流图：安装 → 打开面板 → 操作。](docs/assets/dsh-reach-flow.svg)
 
-![Animated terminal demo of dsh-reach](https://raw.githubusercontent.com/PerryLink/dsh-reach/main/docs/assets/dsh-reach-demo.gif)
+*工作流概览：安装 → 打开面板 → 操作。下面的示例使用实际命令面。*
+
 
 *同一次运行，动图版。*
 
@@ -91,6 +92,18 @@ dsh1024 plugin --profile web add dsh-reach
 - **主动推送**：`reach_send` 工具（出站文件围栏）、限流预算 + FIFO 补发、静默模式、后台完成通知。
 - **设置页**：设置 → 插件 → IM 桥接（状态、开关、重新扫码/退出登录）。
 - **开放通道注册表**：第三方插件通过 `ctx.get('reachChannels').registerChannel({ id, adapter, priority, ownsChatId, startMonitor })` 挂载通道；路由、出站与监视器生命周期全部由桥接层托管（QQ/钉钉/企微走同一路径）。
+
+### 示例
+
+以下为插件真实入口；安装后调用一个即可。
+
+#### 详细示例
+
+- `/rp`
+
+#### 简短示例
+
+- `/rq`
 
 ## Configuration
 
