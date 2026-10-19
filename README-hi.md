@@ -108,6 +108,22 @@ dsh plugin --profile web add github:PerryLink/dsh-reach
 
 *स्रोत `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
+#### विफलता शाखा
+
+**इनपुट**
+
+~~~text
+/rp while 2 approval cards are pending
+~~~
+
+**आउटपुट**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*स्रोत `plugins/dsh-reach/tests/bridge.spec.ts:167-174; plugins/dsh-reach/src/bridge.ts:594-598; plugins/dsh-reach/README.md:121-136`*
+
 #### संक्षिप्त उदाहरण
 
 - `/rq`

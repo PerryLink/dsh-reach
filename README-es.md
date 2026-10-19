@@ -107,6 +107,22 @@ Son los puntos de entrada reales; instala y llama a uno.
 
 *Observado en `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
+#### Rama de fallo
+
+**Entrada**
+
+~~~text
+/rp while 2 approval cards are pending
+~~~
+
+**Salida**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*Observado en `plugins/dsh-reach/tests/bridge.spec.ts:167-174; plugins/dsh-reach/src/bridge.ts:594-598; plugins/dsh-reach/README.md:121-136`*
+
 #### Ejemplos breves
 
 - `/rq`

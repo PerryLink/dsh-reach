@@ -113,6 +113,22 @@ dsh1024 plugin --profile web add dsh-reach
 
 *来源 `tests/bridge.spec.ts:167-174; src/bridge.ts:594-598`*
 
+#### 失败分支
+
+**输入**
+
+~~~text
+/rp while 2 approval cards are pending
+~~~
+
+**输出**
+
+~~~text
+已拒绝 2 张权限卡。
+~~~
+
+*来源 `plugins/dsh-reach/tests/bridge.spec.ts:167-174; plugins/dsh-reach/src/bridge.ts:594-598; plugins/dsh-reach/README.md:121-136`*
+
 #### 简短示例
 
 - `/rq`
