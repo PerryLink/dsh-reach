@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.23] - 2026-10-22
+
+### Fixed
+
+- Sync the five README version stamps to 0.1.23. The v0.1.22 tag's Gate failed
+  because its READMEs still carried v0.1.21; this patch publishes the same code
+  with the stamps corrected so the release workflow can go green.
+
 ## [0.1.22] - 2026-10-18
 
 ### Fixed
