@@ -72,20 +72,20 @@ Full evidence, including the host-version compatibility matrix: `dsh-plugin-supe
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
 
-Maintainers treat this capability as one where **better-adopted alternatives now exist**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
+Maintainers treat this capability as one where **the ecosystem has converged on a more widely adopted implementation**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
 
 | | package | weekly downloads |
 |---|---|---|
 | **this package** | `dsh-reach` | 600 |
-| better-adopted alternative | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
+| more widely adopted implementation | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
 
-**Why the alternative leads.** `@xmanrui/dsh-im` provides ten channels — WeChat, Feishu, WeCom, DingTalk, QQ, Telegram, WhatsApp, Slack, Discord and Matrix.
+**Why it is the mainstream choice.** `@xmanrui/dsh-im` provides ten channels — WeChat, Feishu, WeCom, DingTalk, QQ, Telegram, WhatsApp, Slack, Discord and Matrix.
 
 **Compatibility.** declares no dsh peers, so the compatibility guard never blocks it.
 
-**What this package still does that the alternatives do not.** this package's differentiator was that the same bridge carried approvals and questions back into chat; the rival is far broader in channel coverage
+**What this package still does that the alternatives do not.** this package's differentiator was that the same bridge carried approvals and questions back into chat; the rival is broader in channel coverage
 
-👉 **For new work, prefer @xmanrui/dsh-im.** Existing installs keep working unchanged; nothing is being removed.
+👉 **For new work, @xmanrui/dsh-im is the mainstream choice.** Existing installs keep working unchanged; nothing is being removed.
 
 *Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.*
 

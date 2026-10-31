@@ -57,18 +57,18 @@ dsh1024 plugin --profile web add dsh-reach
 
 > **2026-10-05 起冻结，不再新增功能。** 本包仍可正常使用，**没有退役**——但不再投入功能开发，只有真实故障才会修复。
 
-维护者判定该能力面**已出现采用度更高、更值得推荐的替代方案**，因此把精力移到了别处。
+维护者判定该能力面**生态已收敛到更广泛采用的实现**，因此把精力移到了别处。
 
 | | 包 | 周下载量 |
 |---|---|---|
 | **本包** | `dsh-reach` | 600 |
-| 更值得推荐的替代品 | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
+| 更广泛采用的实现 | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
 
-**为什么替代品更强。** `@xmanrui/dsh-im` 覆盖**十个通道**——微信、飞书、企微、钉钉、QQ、Telegram、WhatsApp、Slack、Discord、Matrix。
+**为什么它是主流选择。** `@xmanrui/dsh-im` 覆盖**十个通道**——微信、飞书、企微、钉钉、QQ、Telegram、WhatsApp、Slack、Discord、Matrix。
 
-**本包仍然独有的能力。** this package's differentiator was that the same bridge carried approvals and questions back into chat; the rival is far broader in channel coverage
+**本包仍然独有的能力。** this package's differentiator was that the same bridge carried approvals and questions back into chat; the rival is broader in channel coverage
 
-👉 **新工作请优先使用 @xmanrui/dsh-im。** 已安装的照常可用，没有任何东西被移除。
+👉 **新工作以 @xmanrui/dsh-im 为主流选择。** 已安装的照常可用，没有任何东西被移除。
 
 *完整证据（含宿主版本兼容矩阵）见 `dsh-plugin-supersession-review-20261005.md`；英文版见 [README.md](README.md) 的 **Maintenance status: 🧊 FROZEN** 一节。*
 

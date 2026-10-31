@@ -54,14 +54,14 @@ Evidencia completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo
 
 > **Congelado el 2026-10-05. Sin nuevas funciones.** Este paquete sigue funcionando y **no está retirado**, pero ya no recibe trabajo de funciones; solo se corregirá una avería real.
 
-Los mantenedores consideran que en esta capacidad **ya existen alternativas con mejor adopción**, así que el esfuerzo se ha trasladado. Comparativa medida el 2026-10-05:
+Los mantenedores consideran que en esta capacidad **la comunidad ha convergido en una implementación más ampliamente adoptada**, así que el esfuerzo se ha trasladado. Comparativa medida el 2026-10-05:
 
 | | paquete | descargas semanales |
 |---|---|---|
 | **este paquete** | `dsh-reach` | 600 |
-| alternativa mejor adoptada | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
+| implementación más ampliamente adoptada | [`@xmanrui/dsh-im`](https://github.com/xmanrui/dsh-im) | **17,384** |
 
-👉 **Para trabajo nuevo, prefiera @xmanrui/dsh-im.** Las instalaciones existentes siguen funcionando sin cambios.
+👉 **Para trabajo nuevo, @xmanrui/dsh-im es la opción principal.** Las instalaciones existentes siguen funcionando sin cambios.
 
 *Evidencia completa: `dsh-plugin-supersession-review-20261005.md`. Texto completo en la sección **Maintenance status: 🧊 FROZEN** de [README.md](README.md).*
 
