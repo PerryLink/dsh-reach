@@ -1,5 +1,10 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-reach-hero-en-dark.webp">
+  <img src="docs/assets/dsh-reach-hero-en-light.webp" width="100%" alt="dsh-reach: a permission card from any DSH workspace delivered to WeChat iLink chat, answered with 1, and resolved as allowed-once, with six channel registrations on the routing rail">
+</picture>
+
 # dsh-reach
 
 **Multi-channel decision & remote-control bridge for DeepSeek Harness (DSH).**
@@ -60,15 +65,20 @@ Restart DSH after installation (bundle patches apply at startup).
 
 Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.
 
-![Workflow diagram for dsh-reach: install → open panel → act.](docs/assets/dsh-reach-flow.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-reach-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-reach-flow-v5-light.svg" width="100%" alt="dsh-reach structure: a two-sided decision bridge — DSH approval/question waterfalls and session events on the left, a top card-delivery lane (capture, render P-number plus token, per-user queue), six IM channels on the right, a bottom decision-return lane (security gate, parser, settle), and the pending ledger holding the deferred promise in the middle">
+</picture>
 
-*Workflow overview: install → open panel → act. The examples below use the real command surface.*
+*Structure: two banks and one round trip. A DSH waterfall (`approval/request` / `user-questions/request`) holds a deferred promise; the bridge renders `P{n}` + `#token`, queues the card per user under the send budget, and `adapterFor(chatId)` routes it to one of six channel adapters. The reply crosses the fail-closed gate and the decision parser, then resolves the held promise; timeout, abort, and unload have explicit exits. Solid arrows are card out on the top lane and decision back on the bottom lane; dashed arrows connect the pending ledger.*
 
 
 
 ## Maintenance status: 🧊 FROZEN
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
+
+**Release: v0.1.24** — Phase 1–3 channels complete (WeChat iLink, Telegram, Feishu); QQ / DingTalk / WeCom are v2 foundations on the open `reachChannels` registry.
 
 Maintainers treat this capability as one where **the ecosystem has converged on a more widely adopted implementation**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
 
