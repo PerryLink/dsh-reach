@@ -1,6 +1,6 @@
 /**
  * `dsh-reach`, browser half: mounts the `reach` Remote contribution and
- * registers the settings tab (`settings.plugins.tab`, id `reach`). All data
+ * registers the settings tab (`plugins.tab`, id `reach`). All data
  * arrives through the `remote.reach` namespace.
  *
  * @module dsh-reach/client
@@ -11,8 +11,9 @@ import type { Context } from '@deepseek-ai/cordis'
 // cordis Context — the published assembly package that owns the merge.
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-// Type-only: pulls the 'settings.plugins.tab' SlotMap declaration in.
+// Type-only: pulls the 'plugins.tab' SlotMap declaration in.
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@deepseek-ai/dsh-client-ui-plugin-manager/client'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import type { ReachConfigInput, ReachConfigResult, ReachStatus } from '../wire.ts'
 import { REACH_REMOTE } from './remote.ts'
@@ -85,8 +86,8 @@ export async function apply(ctx: Context): Promise<void> {
       },
     }
 
-    slots.inject('settings.plugins.tab', () => slots.register({
-      name: 'settings.plugins.tab',
+    slots.inject('plugins.tab', () => slots.register({
+      name: 'plugins.tab',
       id: 'reach',
       order: 50,
       label: () => t('tab'),

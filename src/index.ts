@@ -6,7 +6,7 @@
  * (`inject` is empty). Every feature gates on `ctx.get(...)` / `ctx.inject`
  * and degrades:
  * - no `settings` service → the generated settings form is not suppressed
- *   (the plugin's own `settings.plugins.tab` page needs no host service);
+ *   (the plugin's own `plugins.tab` page needs no host service);
  * - runtime state is session-scoped either way (see `apply`);
  * - no `tools` → the `reach_send` tool is skipped;
  * - no `credentials` → channel tokens come from the row config only;
@@ -229,7 +229,7 @@ export function apply(ctx: Context, config: Config): void {
   // the host's settings service; under the replacement contract a plugin's
   // editable surface is its own `Config`, addressed by the profile entry id
   // and projected field by field through `.volatile()`. This plugin keeps its
-  // settings page (the `reach` Remote service + `settings.plugins.tab`), so the
+  // settings page (the `reach` Remote service + `plugins.tab`), so the
   // only thing left to claim is the presentation policy that suppresses the
   // host's auto-generated duplicate form. Reached through the optional seam
   // (still no hard dependency), and shape-guarded rather than assumed, because

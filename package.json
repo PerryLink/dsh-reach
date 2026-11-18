@@ -256,7 +256,8 @@
     "react-dom": "18.3.1",
     "vitest": "^4.1.10",
     "tsdown": "^0.23.1",
-    "typescript": "^7.0.0"
+    "typescript": "^7.0.0",
+    "@deepseek-ai/dsh-client-ui-plugin-manager": "0.2.2-rc.4"
   },
   "scripts": {
     "build": "node scripts/prepare.mjs",

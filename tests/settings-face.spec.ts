@@ -76,7 +76,7 @@ describe('settings face — the fixture must mirror the real SettingsForms', () 
     // The constructor awaits `ctx.root.loader` to import a legacy settings
     // document; a never-resolving await is enough here and keeps the test off
     // the filesystem.
-    Object.defineProperty(ctx.root, 'loader', { value: { await: () => new Promise(() => {}) }, configurable: true })
+    Object.defineProperty((ctx as unknown as { root: object }).root, 'loader', { value: { await: () => new Promise(() => {}) }, configurable: true })
     const forms = new SettingsForms(ctx as never)
 
     const seen: unknown[] = []
