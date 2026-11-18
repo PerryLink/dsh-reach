@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **Align the dependency pins and declared host range with the 0.2.2-rc.4 line.**
+  @deepseek-ai/dsh-* devDependencies move to 0.2.2-rc.4 (npm next), every
+  @deepseek-ai/dsh-* peer range gains the append-only `>=0.2.2-0 <0.3.0` clause,
+  and engines.dsh gains the same clause. No runtime behaviour changed.
+- Gates: `pnpm run typecheck`, `pnpm run typecheck:ci`, `pnpm test` (14 files /
+  105 tests), `pnpm run lint` (0 errors), `pnpm run build`,
+  `pnpm run verify:self-contained`, `pnpm run check:lockfile`,
+  `pnpm run check:readmes`, `pnpm run verify:artifacts`,
+  `pnpm run check:contract-drift` (10 seams) and `pnpm run check:credential-leak`
+  all exit 0. This repository declares no `pack:check` or `typecheck:checkout`
+  script.
+
 ## [0.1.24] - 2026-10-31
 
 ### Changed
