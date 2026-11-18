@@ -78,7 +78,7 @@ Full evidence, including the host-version compatibility matrix: `dsh-plugin-supe
 
 > **Frozen on 2026-10-05. No new features.** This package still works, and it is not retired — but it no longer receives feature work. Only a genuine breakage will be fixed.
 
-**Release: v0.1.24** — Phase 1–3 channels complete (WeChat iLink, Telegram, Feishu); QQ / DingTalk / WeCom are v2 foundations on the open `reachChannels` registry.
+**Release: v0.1.25** — Phase 1–3 channels complete (WeChat iLink, Telegram, Feishu); QQ / DingTalk / WeCom are v2 foundations on the open `reachChannels` registry.
 
 Maintainers treat this capability as one where **the ecosystem has converged on a more widely adopted implementation**, so effort has moved elsewhere. The comparison below was measured on 2026-10-05 and is recorded so nobody has to redo it.
 
