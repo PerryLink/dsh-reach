@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.25] - 2026-11-18
+
 ### Changed
 
 - **Align the dependency pins and declared host range with the 0.2.2-rc.4 line.**
