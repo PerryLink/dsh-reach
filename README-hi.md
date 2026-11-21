@@ -33,6 +33,10 @@ dsh plugin --profile <name> add dsh-reach
 
 ## Install
 
+![dsh-reach का असली टर्मिनल रन](docs/assets/dsh-reach-demo.gif)
+
+*इस रिपॉज़िटरी में दर्ज असली रन का एनिमेटेड रीप्ले।*
+
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
 dsh1024 plugin --profile web add dsh-reach

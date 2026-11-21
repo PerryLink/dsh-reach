@@ -125,6 +125,10 @@ Maintainers treat this capability as one where **the ecosystem has converged on 
 
 ### Examples
 
+![dsh-reach: real terminal run](docs/assets/dsh-reach-demo.gif)
+
+*Animated replay of a real run recorded in this repository.*
+
 These are the plugin's real entry points; install once, then call one.
 
 #### Detailed example

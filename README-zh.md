@@ -95,6 +95,10 @@ dsh1024 plugin --profile web add dsh-reach
 
 ### 示例
 
+![dsh-reach 真实终端运行](docs/assets/dsh-reach-demo.gif)
+
+*本仓库一次真实运行的动图回放。*
+
 以下为插件真实入口；安装后调用一个即可。
 
 #### 详细示例

@@ -32,6 +32,10 @@ Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https:
 
 ## Install
 
+![dsh-reach: execução real de terminal](docs/assets/dsh-reach-demo.gif)
+
+*Repetição animada de uma execução real registrada neste repositório.*
+
 ```bash
 npx @deepseek-ai/dsh plugin --profile web add dsh-reach
 dsh1024 plugin --profile web add dsh-reach
