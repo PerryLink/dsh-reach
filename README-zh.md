@@ -1,3 +1,12 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-reach-hero-zh-dark.webp">
+  <img src="docs/assets/dsh-reach-hero-zh-light.webp" width="100%" alt="dsh-reach：任意 DSH 工作区的审批卡推送到微信 iLink 聊天，回复 1 后以 allowed-once 解决，路由轨道上有六个通道注册">
+</picture>
+
+</div>
+
 # dsh-reach
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)

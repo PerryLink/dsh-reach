@@ -1,3 +1,12 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-reach-hero-en-dark.webp">
+  <img src="docs/assets/dsh-reach-hero-en-light.webp" width="100%" alt="dsh-reach: um cartão de permissão de qualquer workspace DSH entregue ao chat do WeChat iLink, respondido com 1 e resolvido como allowed-once, com seis registros de canal no trilho de roteamento">
+</picture>
+
+</div>
+
 # dsh-reach
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)

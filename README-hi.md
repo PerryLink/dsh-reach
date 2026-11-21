@@ -1,3 +1,12 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-reach-hero-en-dark.webp">
+  <img src="docs/assets/dsh-reach-hero-en-light.webp" width="100%" alt="dsh-reach: किसी भी DSH वर्कस्पेस का अनुमति कार्ड WeChat iLink चैट तक पहुँचाया गया, 1 से उत्तर दिया गया और allowed-once के रूप में हल हुआ, रूटिंग रेल पर छह चैनल पंजीकरण">
+</picture>
+
+</div>
+
 # dsh-reach
 
 [English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
