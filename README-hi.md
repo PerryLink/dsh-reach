@@ -9,12 +9,13 @@
 
 # dsh-reach
 
+अंतिम सत्यापन: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [English](README.md) · [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 ```sh
 dsh plugin --profile <name> add dsh-reach
 ```
-
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![DSH plugin](https://img.shields.io/badge/dsh--plugin-✅-green)](https://github.com/topics/dsh-plugin)
@@ -34,7 +35,6 @@ dsh plugin --profile <name> add dsh-reach
 > **स्थिति: Phase 1–3 पूर्ण (WeChat + Telegram + Feishu चैनल, v0.1.25); v2 चैनल फाउंडेशन (QQ/DingTalk/WeCom) खुले `reachChannels` रजिस्ट्री पर।**
 > डिज़ाइन योजना, प्रतिस्पर्धी शोध, आधिकारिक कॉन्ट्रैक्ट सत्यापन और चरणबद्ध रोडमैप
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md) में हैं।
-
 
 **📖 इकोसिस्टम नॉलेज बेस** — मापे गए आँकड़े, मार्केटिंग नहीं: [डेवलपमेंट गाइड · चयन डेटा · रखरखाव मानदंड](https://perrylink.github.io/dsh-plugin-guide/)।
 
@@ -60,7 +60,6 @@ dsh1024 plugin --profile web add dsh-reach
 ![dsh-reach कार्यप्रवाह आरेख: इंस्टॉल → पैनल खोलें → कार्य।](docs/assets/dsh-reach-flow.svg)
 
 *कार्यप्रवाह: इंस्टॉल → पैनल खोलें → कार्य। नीचे के उदाहरण वास्तविक कमांड सतह का उपयोग करते हैं।*
-
 
 *वही रन, एनिमेटेड।*
 

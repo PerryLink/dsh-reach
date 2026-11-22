@@ -40,9 +40,14 @@ export function createReachPush(ctx: Context, options: PushOptions): ReachPushSe
 export function registerPushRoute(ctx: Context, service: ReachPushService, pushToken: string): () => void {
   const webServer = ctx.get('webServer')
   if (!webServer) return () => {}
+  // 0.2.3-alpha.1 admits routes by default: this is the documented loopback
+  // push ingress, called by local scripts without a browser session, so it must
+  // declare anonymous admission explicitly (the host extra property is ignored
+  // by earlier lines, which expose every route).
   return webServer.register({
     kind: 'exact',
     path: '/reach/api/push',
+    auth: 'anonymous',
     handler: async (req: IncomingMessage, res: ServerResponse) => {
       const address = req.socket.remoteAddress
       if (address !== '127.0.0.1' && address !== '::1' && address !== '::ffff:127.0.0.1') {
@@ -79,5 +84,7 @@ export function registerPushRoute(ctx: Context, service: ReachPushService, pushT
       res.writeHead(result.ok ? 200 : 502, { 'Content-Type': 'application/json' })
       res.end(JSON.stringify(result))
     },
-  })
+    // The extra admission property is a 0.2.3-alpha.1 host read; earlier lines
+    // type the route without it, so the assertion keeps both rulers green.
+  } as never)
 }

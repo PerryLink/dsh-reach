@@ -9,6 +9,8 @@
 
 # dsh-reach
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![DSH plugin](https://img.shields.io/badge/dsh--plugin-✅-green)](https://github.com/topics/dsh-plugin)
 [![dsh-doctor](https://raw.githubusercontent.com/PerryLink/dsh-plugin-doctor/main/badges/PerryLink__dsh-reach.svg)](https://github.com/PerryLink/dsh-plugin-doctor#verified-徽章)
@@ -26,13 +28,11 @@
 dsh plugin --profile <name> add dsh-reach
 ```
 
-
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的多渠道决策与远程控制桥：把任意工作区的审批/提问卡推送到 IM 通道（微信 iLink、Telegram、飞书——另含 QQ/钉钉/企微 v2 drop-in 基座），并可在聊天中直接答复；附带会话控制台、每通道安全策略与开放推送服务。
 
 > **状态：Phase 1–3 完成（微信 + Telegram + 飞书通道，v0.1.25）；v2 通道基座（QQ/钉钉/企微）基于开放 `reachChannels` 注册表落地。**
 > 设计计划、竞品调研、官方契约核实与分阶段路线见
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md)。
-
 
 **📖 生态实测知识库**（实测数据，不是营销）：[插件开发指南 · 选型实测数据 · 维护取舍判据](https://perrylink.github.io/dsh-plugin-guide/)。
 
@@ -58,7 +58,6 @@ dsh1024 plugin --profile web add dsh-reach
 ![dsh-reach 工作流图：安装 → 打开面板 → 操作。](docs/assets/dsh-reach-flow.svg)
 
 *工作流概览：安装 → 打开面板 → 操作。下面的示例使用实际命令面。*
-
 
 *同一次运行，动图版。*
 

@@ -26,14 +26,12 @@
 dsh plugin --profile <name> add dsh-reach
 ```
 
-
 Ponte multicanal de decisões e controle remoto para o [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH): envia os cartões de aprovação/pergunta de qualquer espaço de trabalho para canais IM (WeChat iLink, Telegram, Feishu — além das bases v2 de QQ/DingTalk/WeCom) e permite respondê-los pelo chat, com console de sessão, segurança por canal e um serviço aberto de notificações.
 
 > **Status: Fases 1–3 concluídas (canais WeChat + Telegram + Feishu, v0.1.25); bases de canais v2 (QQ/DingTalk/WeCom) sobre o registro aberto `reachChannels`.**
 > O plano de design, a pesquisa de concorrentes, a verificação dos contratos
 > oficiais e o roteiro por fases estão em
 > [`docs/design/03-rebuild-direction-and-plan.md`](docs/design/03-rebuild-direction-and-plan.md).
-
 
 **📖 Base de conhecimento do ecossistema** — dados medidos, não marketing: [guia de desenvolvimento · dados de seleção · critérios de manutenção](https://perrylink.github.io/dsh-plugin-guide/).
 
@@ -59,7 +57,6 @@ Evidência completa: `dsh-plugin-supersession-review-20261005.md`. Texto complet
 ![Diagrama de fluxo de dsh-reach: instalar → abrir painel → agir.](docs/assets/dsh-reach-flow.svg)
 
 *Visão geral do fluxo: instalar → abrir painel → agir. Os exemplos abaixo usam a superfície real de comandos.*
-
 
 *A mesma execução, animada.*
 
@@ -87,7 +84,7 @@ Este plugin faz parte da [família de plugins DSH](https://github.com/PerryLink)
 
 | Superfície | Status |
 |---|---|
-| Harness | DeepSeek Harness **dsh-v0.2.2-rc.4** (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0 \|\| >=0.2.2-0 <0.3.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-rc.2`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-11-18 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
+| Harness | DeepSeek Harness **dsh-v0.2.3-alpha.1 (tag do GitHub). Faixa de peers `>=0.1.2-rc.1 <0.2.0 \|\| >=0.1.5-alpha.1 <0.2.0 \|\| >=0.1.6-0 <0.2.0 \|\| >=0.1.7-0 <0.2.0 \|\| >=0.2.2-0 <0.3.0`; os pins de dev/test ficam de propósito na linha publicada `0.1.7-rc.2`, que é a face medida pela régua `typecheck:ci` (a régua `typecheck` mede o checkout através dos `paths` do `tsconfig.json`). Verificado em 2026-11-22 com a cadeia completa de gates; o smoke de bare-import + perfil scratch + keyless roda no workflow Compat em cada PR. |
 | Node | `^22.19.0 \|\| >=24.0.0` |
 
 ## Features (Phase 1)

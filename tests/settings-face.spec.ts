@@ -73,10 +73,15 @@ describe('settings face — the fixture must mirror the real SettingsForms', () 
 
   it('mounts against a REAL SettingsForms service and is accepted', async () => {
     const ctx = new Context()
-    // The constructor awaits `ctx.root.loader` to import a legacy settings
-    // document; a never-resolving await is enough here and keeps the test off
-    // the filesystem.
-    Object.defineProperty((ctx as unknown as { root: object }).root, 'loader', { value: { await: () => new Promise(() => {}) }, configurable: true })
+    // The constructor awaits the root context's `loader` to import a legacy
+    // settings document; a never-resolving await is enough here and keeps the
+    // test off the filesystem. Cordis 4.0.0-rc.12 replaces `ctx.root` with
+    // `ctx[Context.root]`, so read whichever root accessor this line exposes.
+    const rootSymbol = (Context as unknown as { root?: symbol }).root
+    const root = (rootSymbol === undefined
+      ? (ctx as unknown as { root: object }).root
+      : (ctx as unknown as Record<symbol, object>)[rootSymbol]) ?? (ctx as unknown as { root: object }).root
+    Object.defineProperty(root, 'loader', { value: { await: () => new Promise(() => {}) }, configurable: true })
     const forms = new SettingsForms(ctx as never)
 
     const seen: unknown[] = []

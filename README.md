@@ -11,6 +11,8 @@
 
 Pushes any workspace's approval/question cards to IM channels (WeChat iLink, Telegram, Feishu — plus QQ/DingTalk/WeCom v2 drop-in foundations) and answers them from chat, with a session console, per-channel security, and an open push service.
 
+Last verified on DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [简体中文](README-zh.md) · [Español](README-es.md) · [Português](README-pt.md) · [हिन्दी](README-hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -60,7 +62,6 @@ Restart DSH after installation (bundle patches apply at startup).
 
 *English:* part of a 99 plugin family for DeepSeek Harness. If it is useful, **a star helps the next person find it** — nothing is gated behind it.
 
-
 ## What is dsh-reach?
 
 Full evidence, including the host-version compatibility matrix: `dsh-plugin-supersession-review-20261005.md`.
@@ -71,8 +72,6 @@ Full evidence, including the host-version compatibility matrix: `dsh-plugin-supe
 </picture>
 
 *Structure: two banks and one round trip. A DSH waterfall (`approval/request` / `user-questions/request`) holds a deferred promise; the bridge renders `P{n}` + `#token`, queues the card per user under the send budget, and `adapterFor(chatId)` routes it to one of six channel adapters. The reply crosses the fail-closed gate and the decision parser, then resolves the held promise; timeout, abort, and unload have explicit exits. Solid arrows are card out on the top lane and decision back on the bottom lane; dashed arrows connect the pending ledger.*
-
-
 
 ## Maintenance status: 🧊 FROZEN
 
