@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.26] - 2026-11-22
+
 - Fix: declare `auth: 'anonymous'` on the documented loopback `POST /reach/api/push` ingress (0.2.3-alpha.1 requires explicit route admission), and read the root context through `ctx[Context.root]` where the test mounts a real Cordis context.
 - Compatibility: declare DeepSeek Harness 0.2.3-alpha.1 support (>=0.2.3-0 <0.3.0-0 in engines.dsh and every @deepseek-ai/dsh-* peer range) and refresh README verification stamps.
 
