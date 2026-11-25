@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.1.27] - 2026-11-24
+
+### Changed
+
+- **`engines.dsh` is a single `>=0.2.0-0 <0.4.0-0` range.** The append-only union of the 0.1.x/0.2.0/0.2.1/0.2.2/0.2.3 clauses is replaced by one range that admits every 0.2.x-0.3.x host line, so the community plugin index's `0.2.0-0` admission line accepts the published package. Peer dependency ranges and devDependency pins are unchanged; no source or behaviour change.
+- Refresh the five README release stamps and the generated-hero footer to v0.1.27 so `check-readme-sync` passes again.
+
 ## [0.1.26] - 2026-11-22
 
 - Fix: declare `auth: 'anonymous'` on the documented loopback `POST /reach/api/push` ingress (0.2.3-alpha.1 requires explicit route admission), and read the root context through `ctx[Context.root]` where the test mounts a real Cordis context.
