@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.28] - 2026-11-26
+
+### Fixed
+
+- **Refresh the five README release stamps and the generated-hero footer to v0.1.28.** The published 0.1.27 tarball's five READMEs still stamped v0.1.26: the repository stamps had already been fixed for CI, but the npm artifact was produced before that fix. Documentation-only republish; no code change.
+
 ## [0.1.27] - 2026-11-24
 
 ### Changed
